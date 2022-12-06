@@ -3,6 +3,9 @@
     "description": "catchadmin core package",
     "type": "library",
     "require": {
+        "php": "^8.1",
+        "ext-pdo": "*",
+        "ext-zip": "*",
         "tymon/jwt-auth": "dev-develop"
     },
     "license": "MIT",
