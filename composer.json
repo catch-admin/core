@@ -1,5 +1,5 @@
 {
-    "name": "catch/core",
+    "name": "catchadmin/core",
     "description": "catchadmin core package",
     "type": "library",
     "require": {
