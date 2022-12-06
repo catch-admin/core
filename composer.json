@@ -1,0 +1,28 @@
+{
+    "name": "catch/core",
+    "description": "catchadmin core package",
+    "type": "library",
+    "require": {
+        "tymon/jwt-auth": "dev-develop"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Catch\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "JaguarJack",
+            "email": "njphper@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Catch\\Providers\\CatchAdminServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev"
+}
