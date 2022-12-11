@@ -1,6 +1,6 @@
 {
     "name": "catchadmin/core",
-    "description": "catchadmin core package",
+    "description": "catch admin core package",
     "type": "library",
     "require": {
         "php": "^8.1",
@@ -10,6 +10,9 @@
     },
     "license": "MIT",
     "autoload": {
+        "files": [
+            "src/Support/helpers.php"
+        ],
         "psr-4": {
             "Catch\\": "src/"
         }
