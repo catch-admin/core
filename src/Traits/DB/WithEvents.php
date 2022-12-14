@@ -12,23 +12,41 @@
 
 declare(strict_types=1);
 
-namespace Catch\Exceptions;
+namespace Catch\Traits\DB;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Closure;
 
-class Handler extends ExceptionHandler
+/**
+ * base operate
+ */
+trait WithEvents
 {
-    /**
-     * register
-     *
-     * @return void
-     */
-    public function register(): void
-    {
-        if (config('catch')) {
-            $this->dontReport = config('catch.exception.dont_report');
+    protected ?Closure $beforeGetList = null;
 
-            $this->dontFlash = config('catch.exception.dont_flash');
-        }
+
+    protected ?Closure $afterFirstBy = null;
+
+    /**
+     *
+     * @param Closure $closure
+     * @return $this
+     */
+    public function setBeforeGetList(Closure $closure): static
+    {
+        $this->beforeGetList = $closure;
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param Closure $closure
+     * @return $this
+     */
+    public function setAfterFirstBy(Closure $closure): static
+    {
+        $this->afterFirstBy = $closure;
+
+        return $this;
     }
 }

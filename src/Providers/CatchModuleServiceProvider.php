@@ -22,36 +22,41 @@ abstract class CatchModuleServiceProvider extends ServiceProvider
 {
     protected array $events = [];
 
+
     /**
      * register
-     *
-     * @return void
-     * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @return void
      */
-    public function boot(): void
+    public function register(): void
     {
-        $this->registerModuleRoute();
+        $this->registering();
 
         foreach ($this->events as $event => $listener) {
             Event::listen($event, $listener);
         }
+
+        $this->loadModuleRoute();
+    }
+
+
+    protected function registering()
+    {
     }
 
     /**
-     * load module router
-     *
-     * @return void
-     * @throws NotFoundExceptionInterface
+     * return void
      * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    protected function registerModuleRoute(): void
+    protected function loadModuleRoute(): void
     {
-        $route = $this->app['config']->get('catch.route');
+        $routes = $this->app['config']->get('catch.module.routes', []);
 
-        Route::prefix($route['prefix'])
-            ->middleware($route['middlewares'])
-            ->group($this->routePath());
+        $routes[] = $this->routePath();
+
+        $this->app['config']->set('catch.module.routes', $routes);
     }
 
     /**

@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2022 https://catchadmin.com All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin-laravel/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -59,22 +59,6 @@ abstract class CatchModel extends Model
 
         'deleted_at' => 'datetime:Y-m-d H:i:s'
     ];
-
-    /**
-     * @var array
-     */
-    protected array $fieldsInList = ['*'];
-
-    /**
-     * @var bool
-     */
-    protected bool $isPaginate = true;
-
-    /**
-     * @var array $searchable
-     */
-    public array $searchable = [];
-
 
     /**
      * soft delete

@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2022 https://catchadmin.com All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------

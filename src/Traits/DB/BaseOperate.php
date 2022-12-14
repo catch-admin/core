@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Catch\Traits\DB;
 
 use Catch\Enums\Status;
+use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -25,64 +26,53 @@ use Illuminate\Support\Facades\Request;
  */
 trait BaseOperate
 {
-    protected string $sortField = 'sort';
-
-    protected bool $sortDesc = true;
-
-
-    /**
-     * @var string
-     */
-    protected string $parentId = 'parent_id';
-
-    /**
-     *
-     *
-     * @return void
-     */
-    public function initializeBaseOperate(): void
-    {
-        if (property_exists($this, 'mergeCasts')) {
-            $this->mergeCasts($this->mergeCasts);
-        }
-
-        if (property_exists($this, 'mergeHidden')) {
-            $this->makeHidden($this->mergeHidden);
-        }
-    }
+    use WithSearch, WithAttributes, WithEvents, WithRelations;
 
     /**
      * @return mixed
      */
     public function getList(): mixed
     {
-        $queryBuilder = self::query()->select($this->fieldsInList)->quickSearch();
+        $builder = self::query()->select($this->fields)->quickSearch();
+
+        // before list
+        if ($this->beforeGetList instanceof Closure) {
+            $builder = call_user_func($this->beforeGetList, $builder);
+        }
 
         if (in_array($this->sortField, $this->getFillable())) {
-            $queryBuilder = $queryBuilder->orderBy($this->sortField, $this->sortDesc ? 'desc' : 'asc');
+            $builder = $builder->orderBy($this->sortField, $this->sortDesc ? 'desc' : 'asc');
         }
 
-        $queryBuilder = $queryBuilder->orderByDesc('id');
+        $builder = $builder->orderByDesc($this->getKeyName());
 
         if ($this->isPaginate) {
-            return $queryBuilder->paginate(Request::get('limit', $this->perPage));
+            return $builder->paginate(Request::get('limit', $this->perPage));
         }
 
-
-
-        return $queryBuilder->get();
+        // if set as tree, it will show tree data
+        if ($this->asTree) {
+            return $builder->get()->toTree();
+        } else {
+            return $builder->get();
+        }
     }
+
 
     /**
      * save
      *
      * @param array $data
-     * @return false|mixed
+     * @return bool
      */
-    public function storeBy(array $data): mixed
+    public function storeBy(array $data): bool
     {
         if ($this->fill($this->filterData($data))->save()) {
-            return $this->getKey();
+            if ($this->getKey()) {
+                $this->createRelations($data);
+            }
+
+            return true;
         }
 
         return false;
@@ -114,7 +104,13 @@ trait BaseOperate
      */
     public function updateBy($id, array $data): mixed
     {
-        return $this->where($this->getKeyName(), $id)->update($this->filterData($data));
+        $updated = $this->where($this->getKeyName(), $id)->update($this->filterData($data));
+
+        if ($updated) {
+            $this->updateRelations($this->find($id), $data);
+        }
+
+        return $updated;
     }
 
     /**
@@ -145,13 +141,22 @@ trait BaseOperate
     /**
      * get first by ID
      *
-     * @param $id
+     * @param $value
+     * @param null $field
      * @param string[] $columns
      * @return ?Model
      */
-    public function firstBy($id, array $columns = ['*']): ?Model
+    public function firstBy($value, $field = null, array $columns = ['*']): ?Model
     {
-        return static::where($this->getKeyName(), $id)->first($columns);
+        $field = $field ?: $this->getKeyName();
+
+        $model = static::where($field, $value)->first($columns);
+
+        if ($this->afterFirstBy) {
+            $model = call_user_func($this->afterFirstBy, $model);
+        }
+
+        return $model;
     }
 
     /**
@@ -167,10 +172,16 @@ trait BaseOperate
         $model = self::find($id);
 
         if ($force) {
-            return $model->forceDelete();
+            $deleted = $model->forceDelete();
+        } else {
+            $deleted = $model->delete();
         }
 
-        return $model->delete();
+        if ($deleted) {
+            $this->deleteRelations($model);
+        }
+
+        return $deleted;
     }
 
     /**
@@ -180,7 +191,7 @@ trait BaseOperate
      * @param string $field
      * @return bool
      */
-    public function disOrEnable($id, string $field = 'status'): bool
+    public function toggleBy($id, string $field = 'status'): bool
     {
         $model = self::firstBy($id);
 
@@ -229,11 +240,11 @@ trait BaseOperate
         $table = $this->getTable();
 
         if (is_string($fields)) {
-            return "{$table}.{$fields}";
+            return sprintf('%s.%s', $table, $fields);
         }
 
         foreach ($fields as &$field) {
-            $field = "{$table}.{$field}";
+            $field = sprintf('%s.%s', $table, $field);
         }
 
         return $fields;
@@ -270,19 +281,5 @@ trait BaseOperate
         }
 
         return $createdAtColumn;
-    }
-
-    /**
-     * whit form data
-     *
-     * @return $this
-     */
-    public function withoutForm(): static
-    {
-        if (property_exists($this, 'form') && ! empty($this->form)) {
-            $this->form = [];
-        }
-
-        return $this;
     }
 }

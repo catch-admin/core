@@ -45,6 +45,8 @@ return [
     */
     'super_admin' => 1,
 
+    'request_allowed' => true,
+
     /*
     |--------------------------------------------------------------------------
     | catch-admin module setting
@@ -82,7 +84,13 @@ return [
 
             // use database driver
             'table_name' => 'admin_modules'
-        ]
+        ],
+
+        /**
+         * module routes collection
+         *
+         */
+        'routes' => [],
     ],
 
     /*
@@ -117,7 +125,7 @@ return [
         'providers' => [
             'admin_users' => [
                 'driver' => 'eloquent',
-                'model' => \Modules\User\Models\Users::class
+                'model' => \Modules\User\Models\User::class
             ]
         ]
     ],

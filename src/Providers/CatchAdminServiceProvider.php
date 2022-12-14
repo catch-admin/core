@@ -14,14 +14,13 @@ namespace Catch\Providers;
 
 use Catch\CatchAdmin;
 use Catch\Contracts\ModuleRepositoryInterface;
-use Catch\Exceptions\Handler;
 use Catch\Support\DB\Query;
 use Catch\Support\Module\ModuleManager;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -50,8 +49,6 @@ class CatchAdminServiceProvider extends ServiceProvider
         $this->listenDBLog();
 
         $this->mergeAuthConfig();
-
-        // $this->registerExceptionHandler();
 
         MacrosRegister::boot();
     }
@@ -83,19 +80,6 @@ class CatchAdminServiceProvider extends ServiceProvider
     protected function registerCommands(): void
     {
         loadCommands(dirname(__DIR__).DIRECTORY_SEPARATOR.'Commands', 'Catch\\');
-    }
-
-    /**
-     * register exception handler
-     *
-     * @return void
-     */
-    protected function registerExceptionHandler(): void
-    {
-        $this->app->singleton(
-            ExceptionHandler::class,
-            Handler::class
-        );
     }
 
     /**
@@ -188,6 +172,25 @@ class CatchAdminServiceProvider extends ServiceProvider
             if (class_exists($module['provider'])) {
                 $this->app->register($module['provider']);
             }
+        }
+
+        $this->registerModuleRoutes();
+    }
+
+    /**
+     * register module routes
+     *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    protected function registerModuleRoutes()
+    {
+        if (! $this->app->routesAreCached()) {
+            $route = $this->app['config']->get('catch.route');
+
+            Route::prefix($route['prefix'])
+                ->middleware($route['middlewares'])
+                ->group($this->app['config']->get('catch.module.routes'));
         }
     }
 

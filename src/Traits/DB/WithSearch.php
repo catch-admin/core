@@ -12,11 +12,15 @@
 
 declare(strict_types=1);
 
-namespace Catch\Exceptions;
+namespace Catch\Traits\DB;
 
-use Catch\Enums\Code;
-
-class UnMatchedTokenException extends CatchException
+/**
+ * base operate
+ */
+trait WithSearch
 {
-    protected $code = Code::FAILED;
+    /**
+     * @var array $searchable
+     */
+    public array $searchable = [];
 }
