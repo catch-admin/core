@@ -31,7 +31,6 @@ abstract class CatchModel extends Model
 {
     use BaseOperate, Trans, SoftDeletes, ScopeTrait;
 
-
     /**
      * unix timestamp
      *
@@ -47,18 +46,30 @@ abstract class CatchModel extends Model
     /**
      * @var string[]
      */
-    protected $hidden = ['deleted_at'];
-
-    /**
-     * @var string[]
-     */
-    protected $casts = [
+    protected array $defaultCasts = [
         'created_at' => 'datetime:Y-m-d H:i:s',
 
         'updated_at' => 'datetime:Y-m-d H:i:s',
-
-        'deleted_at' => 'datetime:Y-m-d H:i:s'
     ];
+
+    protected array $defaultHidden = ['deleted_at'];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->init();
+    }
+
+    /**
+     * init
+     */
+    protected function init()
+    {
+        $this->makeHidden($this->defaultHidden);
+
+        $this->mergeCasts($this->defaultCasts);
+    }
 
     /**
      * soft delete

@@ -30,7 +30,7 @@ class Collection
     public function toTree(): void
     {
         LaravelCollection::macro(__FUNCTION__, function (int $pid = 0, string $pidField = 'parent_id', string $child = 'children') {
-            return Tree::done($this->all(), $pid, $pidField, $child);
+            return LaravelCollection::make(Tree::done($this->all(), $pid, $pidField, $child));
         });
     }
 

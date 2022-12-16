@@ -33,7 +33,6 @@ trait WithRelations
    {
        foreach ($this->getRelationsData($data) as $relation => $relationData) {
            $isRelation = $this->{$relation}();
-
            if (! count($relationData)) {
                continue;
            }

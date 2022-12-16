@@ -6,6 +6,7 @@ namespace Catch\Support\Macros;
 
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder as LaravelBuilder;
+use Illuminate\Support\Collection;
 
 class Builder
 {

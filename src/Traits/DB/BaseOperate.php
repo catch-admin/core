@@ -19,6 +19,7 @@ use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
 /**
@@ -50,12 +51,13 @@ trait BaseOperate
             return $builder->paginate(Request::get('limit', $this->perPage));
         }
 
+        $data = $builder->get();
         // if set as tree, it will show tree data
         if ($this->asTree) {
-            return $builder->get()->toTree();
-        } else {
-            return $builder->get();
+            return $data->toTree();
         }
+
+        return $data;
     }
 
 
@@ -132,6 +134,10 @@ trait BaseOperate
             if (! empty($form) && ! in_array($k, $form)) {
                 unset($data[$k]);
             }
+        }
+
+        if (in_array($this->getCreatorIdColumn(), $this->getFillable())) {
+            $data['creator_id'] = Auth::guard(getGuardName())->id();
         }
 
         return $data;
@@ -281,5 +287,25 @@ trait BaseOperate
         }
 
         return $createdAtColumn;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getCreatorIdColumn(): string
+    {
+        return 'creator_id';
+    }
+
+    /**
+     *
+     * @return $this
+     */
+    protected function setCreatorId(): static
+    {
+        $this->setAttribute($this->getCreatorIdColumn(), Auth::guard(getGuardName())->id());
+
+        return $this;
     }
 }
