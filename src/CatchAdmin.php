@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace Catch;
 
 use Catch\Support\Module\Installer;
+use Closure;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
 class CatchAdmin
@@ -376,5 +378,26 @@ class CatchAdmin
         }
 
         throw new \RuntimeException("Installer [$installer] Not Found");
+    }
+
+
+    /**
+     * get module
+     *
+     * @return array
+     */
+    public static function parseFromRouteAction(): array
+    {
+        [$controllerNamespace, $action] = explode('@', Route::currentRouteAction());
+
+        $controllerNamespace =  Str::of($controllerNamespace)->lower()->remove('controller')->explode('\\');
+
+
+        $controller = $controllerNamespace->pop();
+
+
+        $module = $controllerNamespace->get(1);
+
+        return [$module, $controller, $action];
     }
 }

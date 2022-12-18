@@ -34,7 +34,7 @@ trait BaseOperate
      */
     public function getList(): mixed
     {
-        $builder = self::query()->select($this->fields)->quickSearch();
+        $builder = self::query()->select(property_exists($this, 'fields') ? '*' : $this->fields)->quickSearch();
 
         // before list
         if ($this->beforeGetList instanceof Closure) {
@@ -124,14 +124,14 @@ trait BaseOperate
     protected function filterData(array $data): array
     {
         // 表单保存的数据集合
-        $form = property_exists($this, 'form') ? $this->form : [];
+        $fillable = array_unique(array_merge($this->getFillable(), property_exists($this, 'form') ? $this->form : []));
 
         foreach ($data as $k => $val) {
             if (is_null($val) || (is_string($val) && ! $val)) {
                 unset($data[$k]);
             }
 
-            if (! empty($form) && ! in_array($k, $form)) {
+            if (! empty($fillable) && ! in_array($k, $fillable)) {
                 unset($data[$k]);
             }
         }

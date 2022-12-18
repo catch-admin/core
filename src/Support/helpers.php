@@ -120,3 +120,17 @@ if (! function_exists('dd_')) {
         exit(1);
     }
 }
+
+if (! function_exists('getAuthUserModel')) {
+    /**
+     * get user model
+     *
+     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
+     */
+    function getAuthUserModel(): mixed
+    {
+        return config('catch.auth.providers.' .
+            config('catch.auth.guards.admin.provider') . '.model'
+        );
+    }
+}
