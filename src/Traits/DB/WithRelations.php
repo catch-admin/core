@@ -29,88 +29,88 @@ trait WithRelations
      *
      * @param array $data
      */
-   protected function createRelations(array $data): void
-   {
-       foreach ($this->getRelationsData($data) as $relation => $relationData) {
-           $isRelation = $this->{$relation}();
-           if (! count($relationData)) {
-               continue;
-           }
+    protected function createRelations(array $data): void
+    {
+        foreach ($this->getRelationsData($data) as $relation => $relationData) {
+            $isRelation = $this->{$relation}();
+            if (! count($relationData)) {
+                continue;
+            }
 
-           // BelongsToMany
-           if ($isRelation instanceof BelongsToMany) {
-               $isRelation->attach($relationData);
-           }
+            // BelongsToMany
+            if ($isRelation instanceof BelongsToMany) {
+                $isRelation->attach($relationData);
+            }
 
-           if ($isRelation instanceof HasMany || $isRelation instanceof HasOne) {
-               $isRelation->create($relationData);
-           }
-       }
-   }
-
-
-    /**
-     * when updated
-     *
-     * @param Model $model
-     * @param array $data
-     */
-   public function updateRelations(Model $model, array $data): void
-   {
-       foreach ($this->getRelationsData($data) as $relation => $relationData) {
-           $isRelation = $model->{$relation}();
-
-           // BelongsToMany
-           if ($isRelation instanceof BelongsToMany) {
-               $isRelation->sync($relationData);
-           }
-       }
-   }
+            if ($isRelation instanceof HasMany || $isRelation instanceof HasOne) {
+                $isRelation->create($relationData);
+            }
+        }
+    }
 
 
-    /**
-     *
-     * @param Model $model
-     */
-   public function deleteRelations(Model $model): void
-   {
-       $relations = $this->getRelations();
-       foreach ($relations as $relation) {
-           $isRelation = $model->{$relation}();
-           // BelongsToMany
-           if ($isRelation instanceof BelongsToMany) {
-               $isRelation->detach();
-           }
-       }
-   }
+     /**
+      * when updated
+      *
+      * @param Model $model
+      * @param array $data
+      */
+    public function updateRelations(Model $model, array $data): void
+    {
+        foreach ($this->getRelationsData($data) as $relation => $relationData) {
+            $isRelation = $model->{$relation}();
+
+            // BelongsToMany
+            if ($isRelation instanceof BelongsToMany) {
+                $isRelation->sync($relationData);
+            }
+        }
+    }
 
 
-    /**
-     * get relations data
-     *
-     * @param array $data
-     * @return array
-     */
-   protected function getRelationsData(array $data): array
-   {
-       $relations = $this->getFormRelations();
+     /**
+      *
+      * @param Model $model
+      */
+    public function deleteRelations(Model $model): void
+    {
+        $relations = $this->getRelations();
+        foreach ($relations as $relation) {
+            $isRelation = $model->{$relation}();
+            // BelongsToMany
+            if ($isRelation instanceof BelongsToMany) {
+                $isRelation->detach();
+            }
+        }
+    }
 
-       if (empty($relations)) {
-           return [];
-       }
 
-       $relationsData = [];
+     /**
+      * get relations data
+      *
+      * @param array $data
+      * @return array
+      */
+    protected function getRelationsData(array $data): array
+    {
+        $relations = $this->getFormRelations();
 
-       foreach ($relations as $relation) {
-           if (!isset($data[$relation]) || !$this->isRelation($relation)) {
-               continue;
-           }
+        if (empty($relations)) {
+            return [];
+        }
 
-           $relationData = $data[$relation];
+        $relationsData = [];
 
-           $relationsData[$relation] = $relationData;
-       }
+        foreach ($relations as $relation) {
+            if (! isset($data[$relation]) || ! $this->isRelation($relation)) {
+                continue;
+            }
 
-       return $relationsData;
-   }
+            $relationData = $data[$relation];
+
+            $relationsData[$relation] = $relationData;
+        }
+
+        return $relationsData;
+    }
 }

@@ -26,10 +26,12 @@ use Illuminate\Support\Facades\Auth;
 abstract class CatchController extends Controller
 {
     /**
-     * @param $guard
+     * @param string|null $guard
+     * @param string|null $field
      * @return Authenticatable
      */
-    protected function getLoginUser($guard = null): Authenticatable
+    protected function getLoginUser(string|null $guard = null,  string|null $field = null): Authenticatable
+
     {
         $user = Auth::guard($guard ?: getGuardName())->user();
 
@@ -37,6 +39,20 @@ abstract class CatchController extends Controller
             throw new FailedException('登录失效, 请重新登录', Code::LOST_LOGIN);
         }
 
+        if ($field) {
+            return $user->getAttribute($field);
+        }
+
         return $user;
+    }
+
+
+    /**
+     * @param $guard
+     * @return mixed
+     */
+    protected function getLoginUserId($guard = null): mixed
+    {
+        return $this->getLoginUser($guard, 'id');
     }
 }

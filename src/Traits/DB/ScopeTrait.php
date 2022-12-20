@@ -16,5 +16,19 @@ namespace Catch\Traits\DB;
 
 trait ScopeTrait
 {
-    // todo
+    /**
+     * creator
+     */
+    public static function scopeCreator($query): void
+    {
+        $model = app(static::class);
+
+        if (in_array($model->getCreatorIdColumn(), $model->getFillable())) {
+                $userModel = app(getAuthUserModel());
+
+            $query->addSelect([
+                    'creator' => $userModel->whereColumn($model->getCreatorIdColumn(), $userModel->getTable() . '.' . $userModel->getKeyName())->select('username')->limit(1)
+                ]);
+        }
+    }
 }

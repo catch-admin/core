@@ -129,8 +129,9 @@ if (! function_exists('getAuthUserModel')) {
      */
     function getAuthUserModel(): mixed
     {
-        return config('catch.auth.providers.' .
-            config('catch.auth.guards.admin.provider') . '.model'
+        return config(
+            'catch.auth.providers.'.
+            config('catch.auth.guards.admin.provider').'.model'
         );
     }
 }

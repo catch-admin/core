@@ -15,6 +15,7 @@ namespace Catch\Providers;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Modules\Permissions\Middlewares\PermissionGate;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -31,18 +32,37 @@ abstract class CatchModuleServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->registering();
-
         foreach ($this->events as $event => $listener) {
             Event::listen($event, $listener);
         }
 
+        $this->loadMiddlewares();
+
         $this->loadModuleRoute();
     }
 
-
-    protected function registering()
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    protected function loadMiddlewares()
     {
+        if (! empty($middlewares = $this->middlewares())) {
+            $route = $this->app['config']->get('catch.route');
+
+            $route['middlewares']= array_merge($middlewares, $route['middlewares']);
+
+            $this->app['config']->set('catch.route', $route);
+        }
+    }
+
+    /**
+     *
+     * @return array
+     */
+    protected function middlewares(): array
+    {
+        return [];
     }
 
     /**

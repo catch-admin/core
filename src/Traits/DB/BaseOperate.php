@@ -34,7 +34,9 @@ trait BaseOperate
      */
     public function getList(): mixed
     {
-        $builder = self::query()->select(property_exists($this, 'fields') ? '*' : $this->fields)->quickSearch();
+        $builder = static::select(property_exists($this, 'fields') ? '*' : $this->fields)
+                    ->creator()
+                    ->quickSearch();
 
         // before list
         if ($this->beforeGetList instanceof Closure) {
@@ -175,7 +177,7 @@ trait BaseOperate
     public function deleteBy($id, bool $force = false): ?bool
     {
         /* @var Model $model */
-        $model = self::find($id);
+        $model = static::find($id);
 
         if ($force) {
             $deleted = $model->forceDelete();
@@ -199,12 +201,14 @@ trait BaseOperate
      */
     public function toggleBy($id, string $field = 'status'): bool
     {
-        $model = self::firstBy($id);
+        $model = $this->firstBy($id);
 
-        $model->{$field} = $model->{$field} == Status::Enable->value() ? Status::Disable->value() : Status::Enable->value();
+        $status = $model->getAttribute($field) ==  Status::Enable->value() ? Status::Disable->value() : Status::Enable->value();
+
+        $model->setAttribute($field, $status);
 
         if ($model->save() && in_array($this->parentId, $this->getFillable())) {
-            $this->updateChildren($id, $field, $model->{$field});
+            $this->updateChildren($id, $field, $model->getAttribute($field));
         }
 
         return true;
@@ -224,10 +228,10 @@ trait BaseOperate
             $parentId = Collection::make([$parentId]);
         }
 
-        $childrenId = $this->whereIn('parent_id', $parentId)->pluck('id');
+        $childrenId = $this->whereIn($this->parentId, $parentId)->pluck('id');
 
         if ($childrenId->count()) {
-            if ($this->whereIn('parent_id', $parentId)->update([
+            if ($this->whereIn($this->parentId, $parentId)->update([
                 $field => $value
             ])) {
                 $this->updateChildren($childrenId, $field, $value);

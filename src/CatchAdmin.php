@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Catch;
 
 use Catch\Support\Module\Installer;
-use Closure;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -390,7 +389,7 @@ class CatchAdmin
     {
         [$controllerNamespace, $action] = explode('@', Route::currentRouteAction());
 
-        $controllerNamespace =  Str::of($controllerNamespace)->lower()->remove('controller')->explode('\\');
+        $controllerNamespace = Str::of($controllerNamespace)->lower()->remove('controller')->explode('\\');
 
 
         $controller = $controllerNamespace->pop();

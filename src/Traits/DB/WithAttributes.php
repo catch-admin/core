@@ -125,6 +125,15 @@ trait WithAttributes
         return [];
     }
 
+    /**
+     * get parent id
+     *
+     * @return string
+     */
+    public function getParentId(): string
+    {
+        return $this->parentId;
+    }
 
     /**
      *
