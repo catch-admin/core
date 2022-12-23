@@ -22,7 +22,7 @@ trait WithAttributes
     /**
      * @var string
      */
-    protected string $parentId = 'parent_id';
+    protected string $parentIdColumn = 'parent_id';
 
     /**
      * @var string
@@ -69,9 +69,9 @@ trait WithAttributes
      * @param string $parentId
      * @return $this
      */
-    public function setParentId(string $parentId): static
+    public function setParentIdColumn(string $parentId): static
     {
-        $this->parentId = $parentId;
+        $this->parentIdColumn = $parentId;
 
         return $this;
     }
@@ -130,9 +130,9 @@ trait WithAttributes
      *
      * @return string
      */
-    public function getParentId(): string
+    public function getParentIdColumn(): string
     {
-        return $this->parentId;
+        return $this->parentIdColumn;
     }
 
     /**

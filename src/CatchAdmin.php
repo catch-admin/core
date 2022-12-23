@@ -399,4 +399,29 @@ class CatchAdmin
 
         return [$module, $controller, $action];
     }
+
+
+    /**
+     *
+     * @param string $module
+     * @param string $controller
+     * @return array
+     * @throws \ReflectionException
+     */
+    public static function getControllerActions(string $module, string $controller): array
+    {
+        $controller = self::getModuleControllerNamespace($module) . Str::of($controller)->ucfirst()->append('Controller')->toString();
+
+        $reflectionClass = new \ReflectionClass($controller);
+
+        $actions = [];
+
+        foreach ($reflectionClass->getMethods() as $method) {
+            if ($method->isPublic() && ! $method->isConstructor()) {
+                $actions[] = $method->getName();
+            }
+        }
+
+        return $actions;
+    }
 }

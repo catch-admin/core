@@ -207,7 +207,7 @@ trait BaseOperate
 
         $model->setAttribute($field, $status);
 
-        if ($model->save() && in_array($this->parentId, $this->getFillable())) {
+        if ($model->save() && in_array($this->getParentIdColumn(), $this->getFillable())) {
             $this->updateChildren($id, $field, $model->getAttribute($field));
         }
 
@@ -228,10 +228,10 @@ trait BaseOperate
             $parentId = Collection::make([$parentId]);
         }
 
-        $childrenId = $this->whereIn($this->parentId, $parentId)->pluck('id');
+        $childrenId = $this->whereIn($this->getParentIdColumn(), $parentId)->pluck('id');
 
         if ($childrenId->count()) {
-            if ($this->whereIn($this->parentId, $parentId)->update([
+            if ($this->whereIn($this->getParentIdColumn(), $parentId)->update([
                 $field => $value
             ])) {
                 $this->updateChildren($childrenId, $field, $value);

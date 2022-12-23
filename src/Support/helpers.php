@@ -105,19 +105,11 @@ if (! function_exists('dd_')) {
      */
     function dd_(...$vars): never
     {
-        if (! in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) && ! headers_sent()) {
-            header('HTTP/1.1 500 Internal Server Error');
-        }
-
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: *');
         header('Access-Control-Allow-Headers: *');
 
-        foreach ($vars as $v) {
-            VarDumper::dump($v);
-        }
-
-        exit(1);
+        dd($vars);
     }
 }
 
