@@ -27,7 +27,8 @@ trait ScopeTrait
                 $userModel = app(getAuthUserModel());
 
             $query->addSelect([
-                    'creator' => $userModel->whereColumn($model->getCreatorIdColumn(), $userModel->getTable() . '.' . $userModel->getKeyName())->select('username')->limit(1)
+                    'creator' => $userModel->whereColumn($userModel->getKeyName(), $model->getTable() . '.' . $model->getCreatorIdColumn())
+                        ->select('username')->limit(1)
                 ]);
         }
     }

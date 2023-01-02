@@ -28,9 +28,9 @@ abstract class CatchController extends Controller
     /**
      * @param string|null $guard
      * @param string|null $field
-     * @return Authenticatable
+     * @return mixed
      */
-    protected function getLoginUser(string|null $guard = null,  string|null $field = null): Authenticatable
+    protected function getLoginUser(string|null $guard = null,  string|null $field = null): mixed
 
     {
         $user = Auth::guard($guard ?: getGuardName())->user();

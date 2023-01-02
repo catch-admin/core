@@ -136,6 +136,10 @@ trait BaseOperate
             if (! empty($fillable) && ! in_array($k, $fillable)) {
                 unset($data[$k]);
             }
+
+            if (in_array($k, [$this->getUpdatedAtColumn(), $this->getCreatedAtColumn()])) {
+                unset($data[$k]);
+            }
         }
 
         if (in_array($this->getCreatorIdColumn(), $this->getFillable())) {

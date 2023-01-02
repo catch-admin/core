@@ -109,7 +109,7 @@ if (! function_exists('dd_')) {
         header('Access-Control-Allow-Methods: *');
         header('Access-Control-Allow-Headers: *');
 
-        dd($vars);
+        dd(...$vars);
     }
 }
 
