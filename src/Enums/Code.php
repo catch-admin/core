@@ -65,7 +65,7 @@ enum Code: int implements Enum
     {
         return match ($this) {
             self::SUCCESS => '操作成功',
-            self::LOST_LOGIN => '登陆失效',
+            self::LOST_LOGIN => '身份认证失效',
             self::VALIDATE_FAILED => '验证失败',
             self::PERMISSION_FORBIDDEN => '权限禁止',
             self::LOGIN_FAILED => '登陆失败',

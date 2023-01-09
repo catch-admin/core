@@ -50,7 +50,7 @@ abstract class CatchModuleServiceProvider extends ServiceProvider
         if (! empty($middlewares = $this->middlewares())) {
             $route = $this->app['config']->get('catch.route');
 
-            $route['middlewares']= array_merge($middlewares, $route['middlewares']);
+            $route['middlewares']= array_merge($route['middlewares'], $middlewares);
 
             $this->app['config']->set('catch.route', $route);
         }

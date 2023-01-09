@@ -4,6 +4,7 @@ namespace Catch\Support\Module;
 
 use Catch\Contracts\ModuleRepositoryInterface;
 use Catch\Support\Composer;
+use Illuminate\Support\Facades\Artisan;
 
 /**
  * installer
@@ -27,18 +28,24 @@ abstract class Installer
     abstract protected function info(): array;
 
     /**
-     * migration
-     *
-     * @return string
+     * migrate
      */
-    abstract protected function migration(): string;
+    protected function migrate(): void
+    {
+        Artisan::call('catch:migrate', [
+            'module' => $this->info()['name']
+        ]);
+    }
 
     /**
      * seed
-     *
-     * @return string
      */
-    abstract protected function seeder(): string;
+    protected function seed():void
+    {
+        Artisan::call('catch:db:seed', [
+            'module' => $this->info()['name']
+        ]);
+    }
 
     /**
      * require packages
@@ -64,7 +71,6 @@ abstract class Installer
     {
         $this->moduleRepository->delete($this->info()['name']);
 
-
         $this->removePackages();
     }
 
@@ -78,9 +84,9 @@ abstract class Installer
         // TODO: Implement __invoke() method.
         $this->moduleRepository->create($this->info());
 
-        // migration
+        $this->migrate();
 
-        // seed
+        $this->seed();
 
         $this->requirePackages();
     }

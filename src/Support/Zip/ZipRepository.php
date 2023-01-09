@@ -170,6 +170,15 @@ class ZipRepository
     }
 
     /**
+     *
+     * @return mixed|ZipArchive
+     */
+    public function getArchive(): mixed
+    {
+        return $this->archive;
+    }
+
+    /**
      * Closes the archive and saves it
      */
     public function close(): void

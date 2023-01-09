@@ -43,13 +43,9 @@ class CatchAdminServiceProvider extends ServiceProvider
     {
         $this->bootDefaultModuleProviders();
         $this->bootModuleProviders();
-
         $this->registerEvents();
-
         $this->listenDBLog();
-
         $this->mergeAuthConfig();
-
         MacrosRegister::boot();
     }
 
@@ -163,8 +159,9 @@ class CatchAdminServiceProvider extends ServiceProvider
 
     /**
      * boot module
-     *
      * @throws BindingResolutionException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     protected function bootModuleProviders()
     {
