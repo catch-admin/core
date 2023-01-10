@@ -1,0 +1,24 @@
+<?php
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+return new class extends Seeder
+{
+    /**
+     * Run the seeder.
+     *
+     * @return void
+     */
+    public function run(): void
+    {
+        $menus = $this->menus();
+
+        importTreeData($menus, 'permissions');
+    }
+
+    public function menus(): array
+    {
+        {menus}
+    }
+};

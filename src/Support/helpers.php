@@ -127,3 +127,48 @@ if (! function_exists('getAuthUserModel')) {
         );
     }
 }
+
+
+if (! function_exists('importTreeData')) {
+    /**
+     * import tree data
+     *
+     * @param $data
+     * @param $table
+     * @param string $pid
+     * @param string $primaryKey
+     */
+    function importTreeData(array $data, string $table, string $pid = 'parent_id', string $primaryKey = 'id'): void
+    {
+        foreach ($data as $value) {
+            if (isset($value[$primaryKey])) {
+                unset($value[$primaryKey]);
+            }
+
+            $children = $value['children'] ?? false;
+            if($children) {
+                unset($value['children']);
+            }
+
+            // 首先查询是否存在
+            $menu = DB::table($table)
+                ->where('permission_name', $value['permission_name'])
+                ->where('module', $value['module'])
+                ->where('permission_mark', $value['permission_mark'])
+                ->first();
+
+            if (!empty($menu)) {
+                $id = $menu['id'];
+            } else {
+                $id = DB::table($table)->insertGetId($value);
+            }
+            if ($children) {
+                foreach ($children as &$v) {
+                    $v[$pid] = $id;
+                }
+
+                importTreeData($children, $table, $pid);
+            }
+        }
+    }
+}
