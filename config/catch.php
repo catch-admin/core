@@ -61,7 +61,7 @@ return [
 
         'namespace' => 'Modules',
 
-        'default' => ['develop', 'user', 'permission'],
+        'default' => ['develop', 'user', 'common'],
 
         'default_dirs' => [
             'Http'.DIRECTORY_SEPARATOR,
