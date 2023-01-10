@@ -23,7 +23,7 @@ class SeedRun extends CatchCommand
      *
      * @var string
      */
-    protected $signature = 'catch:db:seed {module} {--class=}';
+    protected $signature = 'catch:db:seed {module} {--seeder=}';
 
     /**
      * The console command description.
@@ -49,40 +49,30 @@ class SeedRun extends CatchCommand
      */
     public function handle(): void
     {
-        $classes = $this->loadModuleSeeders();
-
-        if ($class = $this->option('class')) {
-            (new $class())->run();
-        } else {
-            foreach ($classes as $class) {
-                $class = new $class();
-                if (method_exists($class, 'run')) {
-                    $class->run();
-                }
-            }
-        }
-
-        $this->info('Seed run successfully');
-    }
-
-
-    /**
-     *
-     * @time 2021年07月31日
-     * @return array
-     */
-    protected function loadModuleSeeders(): array
-    {
         $files = File::allFiles(CatchAdmin::getModuleSeederPath($this->argument('module')));
 
         $fileNames = [];
 
-        foreach ($files as $file) {
-            require_once $file->getRealPath();
+        $seeder = $this->option('seeder');
 
-            $fileNames[] = pathinfo($file->getBasename(), PATHINFO_FILENAME);
+        if ($seeder) {
+            foreach ($files as $file) {
+                if (pathinfo($file->getBasename(), PATHINFO_FILENAME) == $seeder) {
+                    $class = require_once $file->getRealPath();
+
+                    $seeder = new $class();
+
+                    $seeder->run();
+                }
+            }
+        } else {
+            foreach ($files as $file) {
+                if (File::exists($file->getRealPath())) {
+                    $class = require_once $file->getRealPath();
+                    $class = new $class();
+                        $class->run();
+                }
+            }
         }
-
-        return $fileNames;
     }
 }

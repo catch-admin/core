@@ -27,7 +27,7 @@ class ExportMenuCommand extends CatchCommand
 
     protected $description = 'catch export table data';
 
-    
+
     public function handle(): void
     {
         $module = $this->argument('module');

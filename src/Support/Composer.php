@@ -2,6 +2,7 @@
 
 namespace Catch\Support;
 
+use Catch\Exceptions\FailedException;
 use Illuminate\Support\Composer as LaravelComposer;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
@@ -72,6 +73,10 @@ class Composer extends LaravelComposer
         $process = $this->getProcess($command);
 
         $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new FailedException($process->getErrorOutput());
+        }
 
         return $process->getOutput();
     }

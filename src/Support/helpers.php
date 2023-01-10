@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\VarDumper\VarDumper;
+use Catch\Base\CatchModel;
 
 /**
  * load commands
@@ -133,8 +134,8 @@ if (! function_exists('importTreeData')) {
     /**
      * import tree data
      *
-     * @param $data
-     * @param $table
+     * @param array $data
+     * @param string $table
      * @param string $pid
      * @param string $primaryKey
      */
@@ -151,14 +152,15 @@ if (! function_exists('importTreeData')) {
             }
 
             // 首先查询是否存在
-            $menu = DB::table($table)
-                ->where('permission_name', $value['permission_name'])
+            $model = new class extends CatchModel {};
+
+            $menu = $model->setTable($table)->where('permission_name', $value['permission_name'])
                 ->where('module', $value['module'])
                 ->where('permission_mark', $value['permission_mark'])
                 ->first();
 
-            if (!empty($menu)) {
-                $id = $menu['id'];
+            if ($menu) {
+                $id = $menu->id;
             } else {
                 $id = DB::table($table)->insertGetId($value);
             }
