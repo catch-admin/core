@@ -98,7 +98,7 @@ class InstallCommand extends CatchCommand
     private function checkPHPVersion()
     {
         if (version_compare(PHP_VERSION, '8.1.0', '<')) {
-            // $this->error('php version should >= 8.1');
+            $this->error('php version should >= 8.1');
         }
     }
 
@@ -162,6 +162,12 @@ class InstallCommand extends CatchCommand
         exec(Application::formatCommandString('vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"'));
 
         exec(Application::formatCommandString('jwt:secret'));
+
+        exec(Application::formatCommandString('catch:migrate user'));
+
+        exec(Application::formatCommandString('catch:db:seed user'));
+
+        exec(Application::formatCommandString('catch:migrate develop'));
     }
 
     /**
@@ -209,9 +215,6 @@ class InstallCommand extends CatchCommand
                 }
             }
         }
-
-        // add vite config
-        $env[] = 'VITE_BASE_URL=${APP_URL}/api/';
 
         File::put(app()->environmentFile(), implode("\n", $env));
 
