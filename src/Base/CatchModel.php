@@ -69,6 +69,13 @@ abstract class CatchModel extends Model
         $this->makeHidden($this->defaultHidden);
 
         $this->mergeCasts($this->defaultCasts);
+
+        // auto use data range
+        foreach (class_uses_recursive(static::class) as $trait) {
+            if (str_contains($trait, 'DataRange')) {
+                $this->setDataRange();
+            }
+        }
     }
 
     /**

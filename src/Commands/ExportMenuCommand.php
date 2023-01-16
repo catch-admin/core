@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\DB;
 
 class ExportMenuCommand extends CatchCommand
 {
-    protected $signature = 'catch:export:menu {module} {table} {--p}';
+    protected $signature = 'catch:export:menu {module} {table?} {--p}';
 
     protected $description = 'catch export table data';
 
@@ -32,7 +32,7 @@ class ExportMenuCommand extends CatchCommand
     {
         $module = $this->argument('module');
 
-        $table = $this->argument('table');
+        $table = $this->argument('table') ? : 'permissions';
 
         $p = $this->option('p');
 

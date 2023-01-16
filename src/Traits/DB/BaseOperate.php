@@ -38,6 +38,11 @@ trait BaseOperate
                     ->creator()
                     ->quickSearch();
 
+        // 数据权限
+        if ($this->dataRange) {
+           $builder = $builder->dataRange();
+        }
+
         // before list
         if ($this->beforeGetList instanceof Closure) {
             $builder = call_user_func($this->beforeGetList, $builder);

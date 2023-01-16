@@ -65,6 +65,11 @@ trait WithAttributes
     protected array $formRelations = [];
 
     /**
+     * @var bool
+     */
+    protected bool $dataRange = false;
+
+    /**
      *
      * @param string $parentId
      * @return $this
@@ -146,5 +151,18 @@ trait WithAttributes
         }
 
         return [];
+    }
+
+    /**
+     * set data range
+     *
+     * @param bool $use
+     * @return $this
+     */
+    public function setDataRange(bool $use = true): static
+    {
+        $this->dataRange = $use;
+
+        return $this;
     }
 }

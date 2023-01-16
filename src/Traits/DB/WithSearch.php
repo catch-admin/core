@@ -23,4 +23,16 @@ trait WithSearch
      * @var array $searchable
      */
     public array $searchable = [];
+
+    /**
+     *
+     * @param array $searchable
+     * @return $this
+     */
+    public function setSearchable(array $searchable): static
+    {
+        $this->searchable = $searchable;
+
+        return $this;
+    }
 }

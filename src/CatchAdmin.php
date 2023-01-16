@@ -327,7 +327,11 @@ class CatchAdmin
      */
     public static function getModuleRoutePath(string $module, string $routeName = 'route.php'): string
     {
-        return self::getModulePath($module).$routeName;
+        $path = self::getModulePath($module). 'routes' . DIRECTORY_SEPARATOR;
+
+        self::makeDir($path);
+
+        return $path . $routeName;
     }
 
     /**
@@ -370,7 +374,7 @@ class CatchAdmin
      */
     public static function getModuleInstaller(string $module): Installer
     {
-        $installer = self::getModuleServiceProviderNamespace($module).'Installer';
+        $installer = self::getModuleNamespace($module).'Installer';
 
         if (class_exists($installer)) {
             return app($installer);
