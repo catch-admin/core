@@ -72,16 +72,16 @@ trait BaseOperate
      * save
      *
      * @param array $data
-     * @return bool
+     * @return mixed
      */
-    public function storeBy(array $data): bool
+    public function storeBy(array $data): mixed
     {
         if ($this->fill($this->filterData($data))->save()) {
             if ($this->getKey()) {
                 $this->createRelations($data);
             }
 
-            return true;
+            return $this->getKey();
         }
 
         return false;
