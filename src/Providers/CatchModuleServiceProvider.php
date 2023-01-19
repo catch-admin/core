@@ -12,12 +12,13 @@
 
 namespace Catch\Providers;
 
+use Catch\CatchAdmin;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Modules\Permissions\Middlewares\PermissionGate;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\Finder\Finder;
+use Illuminate\Config\Repository;
 
 abstract class CatchModuleServiceProvider extends ServiceProvider
 {
@@ -39,6 +40,8 @@ abstract class CatchModuleServiceProvider extends ServiceProvider
         $this->loadMiddlewares();
 
         $this->loadModuleRoute();
+
+        $this->loadConfig();
     }
 
     /**
@@ -53,6 +56,26 @@ abstract class CatchModuleServiceProvider extends ServiceProvider
             $route['middlewares']= array_merge($route['middlewares'], $middlewares);
 
             $this->app['config']->set('catch.route', $route);
+        }
+    }
+
+    /**
+     * load module config
+     */
+    protected function loadConfig()
+    {
+        if (! is_dir($configPath = $this->configPath())) {
+            return;
+        }
+
+        $files = [];
+        foreach (Finder::create()->files()->name('*.php')->in($configPath) as $file) {
+            $files[str_replace('.php', '', $file->getBasename())] = $file->getRealPath();
+        }
+
+        // multi config files
+        foreach ($files as $name => $file) {
+            $this->app->make('config')->set(sprintf('%s.%s',$this->moduleName(), $name), require $file);
         }
     }
 
@@ -74,7 +97,7 @@ abstract class CatchModuleServiceProvider extends ServiceProvider
     {
         $routes = $this->app['config']->get('catch.module.routes', []);
 
-        $routes[] = $this->routePath();
+        $routes[] = CatchAdmin::getModuleRoutePath($this->moduleName());
 
         $this->app['config']->set('catch.module.routes', $routes);
     }
@@ -84,5 +107,16 @@ abstract class CatchModuleServiceProvider extends ServiceProvider
      *
      * @return string|array
      */
-    abstract protected function routePath(): string | array;
+    abstract protected function moduleName(): string | array;
+
+
+    /**
+     * module config path
+     *
+     * @return string
+     */
+    protected function configPath(): string
+    {
+        return CatchAdmin::getModulePath($this->moduleName()) . 'config' . DIRECTORY_SEPARATOR;
+    }
 }
