@@ -71,13 +71,13 @@ if (! function_exists('withTablePrefix')) {
 if (! function_exists('getGuardName')) {
     function getGuardName(): string
     {
-        $guardKeys = array_keys(config('catch.auth.guards'));
+        $guardKeys = array_keys(config('catch.auth.guards', []));
 
         if (count($guardKeys)) {
             return $guardKeys[0];
         }
 
-        return 'admin';
+        return 'sanctum';
     }
 }
 
@@ -118,17 +118,13 @@ if (! function_exists('getAuthUserModel')) {
     /**
      * get user model
      *
-     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
+     * @return mixed
      */
     function getAuthUserModel(): mixed
     {
-        return config(
-            'catch.auth.providers.'.
-            config('catch.auth.guards.admin.provider').'.model'
-        );
+        return config('catch.auth_model');
     }
 }
-
 
 if (! function_exists('importTreeData')) {
     /**

@@ -45,7 +45,6 @@ class CatchAdminServiceProvider extends ServiceProvider
         $this->bootModuleProviders();
         $this->registerEvents();
         $this->listenDBLog();
-        $this->mergeAuthConfig();
         MacrosRegister::boot();
     }
 
@@ -149,7 +148,7 @@ class CatchAdminServiceProvider extends ServiceProvider
      */
     protected function bootDefaultModuleProviders(): void
     {
-        foreach ($this->app['config']->get('catch.module.default') as $module) {
+        foreach ($this->app['config']->get('catch.module.default', []) as $module) {
             $provider = CatchAdmin::getModuleServiceProvider($module);
             if (class_exists($provider)) {
                 $this->app->register($provider);
@@ -185,9 +184,14 @@ class CatchAdminServiceProvider extends ServiceProvider
         if (! $this->app->routesAreCached()) {
             $route = $this->app['config']->get('catch.route');
 
+            if (empty($route)) {
+                return;
+            }
+
             Route::prefix($route['prefix'])
                 ->middleware($route['middlewares'])
                 ->group($this->app['config']->get('catch.module.routes'));
+
         }
     }
 
@@ -206,24 +210,6 @@ class CatchAdminServiceProvider extends ServiceProvider
             $this->app->terminating(function () {
                 Query::log();
             });
-        }
-    }
-
-    /**
-     * merge auth config
-     *
-     * @throws BindingResolutionException
-     * @return void
-     */
-    protected function mergeAuthConfig(): void
-    {
-        if (! $this->app->configurationIsCached()) {
-            $config = $this->app->make('config');
-
-            $config->set('auth', array_merge_recursive(
-                $config->get('catch.auth', []),
-                $config->get('auth', [])
-            ));
         }
     }
 }

@@ -51,7 +51,9 @@ abstract class CatchModuleServiceProvider extends ServiceProvider
     protected function loadMiddlewares()
     {
         if (! empty($middlewares = $this->middlewares())) {
-            $route = $this->app['config']->get('catch.route');
+            $route = $this->app['config']->get('catch.route', [
+                'middlewares' => []
+            ]);
 
             $route['middlewares']= array_merge($route['middlewares'], $middlewares);
 

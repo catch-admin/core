@@ -33,12 +33,12 @@ class ModuleManager extends Manager
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getDefaultDriver(): string
+    public function getDefaultDriver(): string|null
     {
         // TODO: Implement getDefaultDriver() method.
-        return $this->config->get('catch.module.driver.default');
+        return $this->config->get('catch.module.driver.default', $this->defaultDriver());
     }
 
     /**
@@ -59,5 +59,15 @@ class ModuleManager extends Manager
     public function createDatabaseDriver(): DatabaseDriver
     {
         return new DatabaseDriver();
+    }
+
+    /**
+     * default driver
+     *
+     * @return string
+     */
+    protected function defaultDriver():string
+    {
+        return 'file';
     }
 }

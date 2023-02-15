@@ -159,15 +159,15 @@ class InstallCommand extends CatchCommand
 
         exec(Application::formatCommandString('vendor:publish --tag=catch-config'));
 
-        exec(Application::formatCommandString('vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"'));
-
-        exec(Application::formatCommandString('jwt:secret'));
+        exec(Application::formatCommandString('vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"'));
 
         exec(Application::formatCommandString('catch:migrate user'));
 
         exec(Application::formatCommandString('catch:db:seed user'));
 
         exec(Application::formatCommandString('catch:migrate develop'));
+
+        exec(Application::formatCommandString('migrate'));
     }
 
     /**
