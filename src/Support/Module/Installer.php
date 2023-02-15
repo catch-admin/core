@@ -84,9 +84,9 @@ abstract class Installer
         // TODO: Implement __invoke() method.
         $this->moduleRepository->create($this->info());
 
-        // $this->migrate();
+        $this->migrate();
 
-        // $this->seed();
+        $this->seed();
 
         $this->requirePackages();
     }
