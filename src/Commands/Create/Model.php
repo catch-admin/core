@@ -124,7 +124,6 @@ class Model extends CatchCommand
                     '{namespace}', '{model}', '{table}', '{fillable}'
                 ],
                 [
-
                     $this->getModelNamespace(), $this->getModelName(),
 
                     $this->getTableName(), $this->getFillable()
@@ -149,9 +148,11 @@ class Model extends CatchCommand
      */
     protected function getTableName(): string
     {
-        return $this->option('t') ? $this->option('t') :
-            Str::of($this->argument('model'))
-                ->snake()->lcfirst()->toString();
+        return $this->option('t') ?
+
+            $this->option('t') :
+
+            Str::of($this->argument('model'))->snake()->lcfirst()->toString();
     }
 
     /**
@@ -163,11 +164,9 @@ class Model extends CatchCommand
     {
         $fillable = Str::of('');
 
-
         foreach (getTableColumns($this->getTableName()) as $column) {
             $fillable = $fillable->append("'{$column}', ");
         }
-
 
         return $fillable->trim(',')->toString();
     }

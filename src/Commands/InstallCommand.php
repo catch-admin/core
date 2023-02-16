@@ -210,7 +210,7 @@ class InstallCommand extends CatchCommand
                 'DB_PASSWORD' => $dbPassword,
                 'DB_PREFIX' => $prefix
             ] as $key => $newValue) {
-                if ($value == $key) {
+                if (Str::contains($value, $key) && !Str::contains($value, 'VITE_')) {
                     $value = $this->resetEnvValue($value, $newValue);
                 }
             }

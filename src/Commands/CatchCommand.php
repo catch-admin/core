@@ -86,7 +86,6 @@ abstract class CatchCommand extends Command
 HTML
         );
 
-
         $this->newLine();
 
         if ($default && ! $answer) {
