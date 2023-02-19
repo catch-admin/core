@@ -21,6 +21,7 @@ use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 use Catch\Support\Composer;
 
@@ -154,20 +155,24 @@ class InstallCommand extends CatchCommand
      */
     protected function publishConfig(): void
     {
-        // can't use Artisan::call, it will block the process, no reason found, just block!!!
-        exec(Application::formatCommandString('key:generate'));
+        try {
+            Process::run(Application::formatCommandString('key:generate'))->throw();
 
-        exec(Application::formatCommandString('vendor:publish --tag=catch-config'));
+            Process::run(Application::formatCommandString('vendor:publish --tag=catch-config'))->throw();
 
-        exec(Application::formatCommandString('vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"'));
+            Process::run(Application::formatCommandString('vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"'))->throw();
 
-        exec(Application::formatCommandString('catch:migrate user'));
+            Process::run(Application::formatCommandString('catch:migrate user'))->throw();
 
-        exec(Application::formatCommandString('catch:db:seed user'));
+            Process::run(Application::formatCommandString('catch:migrate develop'))->throw();
 
-        exec(Application::formatCommandString('catch:migrate develop'));
+            Process::run(Application::formatCommandString('migrate'))->throw();
 
-        exec(Application::formatCommandString('migrate'));
+            Process::run(Application::formatCommandString('catch:db:seed user'))->throw();
+        }catch (\Exception|\Throwable $e) {
+            $this->error($e->getMessage());
+            exit;
+        }
     }
 
     /**
