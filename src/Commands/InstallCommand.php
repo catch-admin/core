@@ -44,14 +44,16 @@ class InstallCommand extends CatchCommand
     public function handle(): void
     {
         try {
-            $this->detectionEnvironment();
+            // 如果没有 .env 文件
+           if (! File::exists(app()->environmentFile())) {
+               $this->detectionEnvironment();
 
-            $this->copyEnvFile();
+               $this->copyEnvFile();
 
-            $this->askForCreatingDatabase();
+               $this->askForCreatingDatabase();
+           }
 
             $this->publishConfig();
-
             $this->installed();
         } catch (\Throwable $e) {
             File::delete(app()->environmentFilePath());
