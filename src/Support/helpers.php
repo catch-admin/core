@@ -189,10 +189,10 @@ if (! function_exists('loadCachedAdminRoutes')) {
         if (routesAreCached()) {
             if (app()->runningInConsole()) {
                 require CatchAdmin::getRouteCachePath();
-            }
-
-            if (isRequestFromDashboard()) {
+            } elseif (isRequestFromDashboard()) {
                 require CatchAdmin::getRouteCachePath();
+            } else {
+                //
             }
         }
     }
