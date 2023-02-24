@@ -18,7 +18,6 @@ use Illuminate\Support\ServiceProvider;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Finder\Finder;
-use Illuminate\Config\Repository;
 
 abstract class CatchModuleServiceProvider extends ServiceProvider
 {

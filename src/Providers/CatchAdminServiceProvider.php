@@ -20,8 +20,10 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
@@ -41,6 +43,10 @@ class CatchAdminServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (! $this->app->runningInConsole() && !isRequestFromDashboard()) {
+            return;
+        }
+
         $this->bootDefaultModuleProviders();
         $this->bootModuleProviders();
         $this->registerEvents();
@@ -181,7 +187,7 @@ class CatchAdminServiceProvider extends ServiceProvider
      */
     protected function registerModuleRoutes()
     {
-        if (! $this->app->routesAreCached()) {
+        if (! $this->routesAreCached()) {
             $route = $this->app['config']->get('catch.route');
 
             if (empty($route)) {
@@ -191,7 +197,6 @@ class CatchAdminServiceProvider extends ServiceProvider
             Route::prefix($route['prefix'])
                 ->middleware($route['middlewares'])
                 ->group($this->app['config']->get('catch.module.routes'));
-
         }
     }
 
@@ -211,5 +216,15 @@ class CatchAdminServiceProvider extends ServiceProvider
                 Query::log();
             });
         }
+    }
+
+    /**
+     * file exist
+     *
+     * @return bool
+     */
+    protected function routesAreCached(): bool
+    {
+        return routesAreCached();
     }
 }

@@ -428,4 +428,15 @@ class CatchAdmin
 
         return $actions;
     }
+
+
+    /**
+     * get route cache path
+     *
+     * @return string
+     */
+    public static function getRouteCachePath(): string
+    {
+        return config('catch.route.cache_path');
+    }
 }

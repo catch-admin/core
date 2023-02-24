@@ -16,10 +16,11 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\VarDumper\VarDumper;
 use Catch\Base\CatchModel;
+use Catch\CatchAdmin;
 
 /**
  * load commands
@@ -168,5 +169,38 @@ if (! function_exists('importTreeData')) {
                 importTreeData($children, $table, $pid);
             }
         }
+    }
+}
+
+if (! function_exists('isRequestFromDashboard')) {
+    /**
+     * @return bool
+     */
+    function isRequestFromDashboard(): bool
+    {
+        return Request::hasHeader('Request-from')
+            && Str::of(Request::header('Request-from'))->lower()->exactly('dashboard');
+    }
+}
+
+if (! function_exists('loadCachedAdminRoutes')) {
+    function loadCachedAdminRoutes(): void
+    {
+        if (routesAreCached()) {
+            if (app()->runningInConsole()) {
+                require CatchAdmin::getRouteCachePath();
+            }
+
+            if (isRequestFromDashboard()) {
+                require CatchAdmin::getRouteCachePath();
+            }
+        }
+    }
+}
+
+if (! function_exists('routesAreCached')) {
+    function routesAreCached(): bool
+    {
+        return file_exists(CatchAdmin::getRouteCachePath());
     }
 }

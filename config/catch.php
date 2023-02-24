@@ -134,6 +134,8 @@ return [
         'middlewares' => [
             \Catch\Middleware\AuthMiddleware::class,
             \Catch\Middleware\JsonResponseMiddleware::class
-        ]
+        ],
+
+        'cache_path' => base_path('bootstrap/cache') . DIRECTORY_SEPARATOR . 'admin_route_cache.php'
     ],
 ];
