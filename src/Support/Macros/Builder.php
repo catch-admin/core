@@ -12,15 +12,13 @@ class Builder
     /**
      * boot
      */
-    public static function boot(): void
+    public function boot(): void
     {
-        $builder = new static();
+        $this->whereLike();
 
-        $builder->whereLike();
+        $this->quickSearch();
 
-        $builder->quickSearch();
-
-        $builder->tree();
+        $this->tree();
     }
 
     /**

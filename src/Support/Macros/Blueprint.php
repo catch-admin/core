@@ -11,25 +11,23 @@ class Blueprint
     /**
      * boot;
      */
-    public static function boot(): void
+    public function boot(): void
     {
-        $bluePrint = new static();
+        $this->createdAt();
 
-        $bluePrint->createdAt();
+        $this->updatedAt();
 
-        $bluePrint->updatedAt();
+        $this->deletedAt();
 
-        $bluePrint->deletedAt();
+        $this->status();
 
-        $bluePrint->status();
+        $this->creatorId();
 
-        $bluePrint->creatorId();
+        $this->unixTimestamp();
 
-        $bluePrint->unixTimestamp();
+        $this->parentId();
 
-        $bluePrint->parentId();
-
-        $bluePrint->sort();
+        $this->sort();
     }
 
     /**

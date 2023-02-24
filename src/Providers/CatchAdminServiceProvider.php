@@ -23,11 +23,10 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
-use Catch\Support\Macros\Register as MacrosRegister;
+use Catch\Support\Macros\MacrosRegister;
 
 /**
  * CatchAmin Service Provider
@@ -43,15 +42,15 @@ class CatchAdminServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (! $this->app->runningInConsole() && !isRequestFromDashboard()) {
-            return;
+        if (!isRequestFromDashboard()) {
+           // return;
         }
 
         $this->bootDefaultModuleProviders();
         $this->bootModuleProviders();
         $this->registerEvents();
         $this->listenDBLog();
-        MacrosRegister::boot();
+        $this->app->make(MacrosRegister::class)->boot();
     }
 
     /**

@@ -13,13 +13,11 @@ class Collection
     /**
      * boot
      */
-    public static function boot(): void
+    public function boot(): void
     {
-        $collection = new static();
+        $this->toOptions();
 
-        $collection->toOptions();
-
-        $collection->toTree();
+        $this->toTree();
     }
 
     /**
