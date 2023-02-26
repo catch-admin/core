@@ -437,6 +437,6 @@ class CatchAdmin
      */
     public static function getRouteCachePath(): string
     {
-        return config('catch.route.cache_path');
+        return config('catch.route.cache_path', base_path('bootstrap/cache') . DIRECTORY_SEPARATOR . 'admin_route_cache.php');
     }
 }
