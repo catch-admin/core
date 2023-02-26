@@ -21,7 +21,7 @@ class MacrosRegister
      */
     public function boot(): void
     {
-        $this->builder->boot();
+        $this->blueprint->boot();
         $this->collection->boot();
         $this->builder->boot();
     }
