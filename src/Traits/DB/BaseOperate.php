@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Catch\Traits\DB;
 
 use Catch\Enums\Status;
+use Catch\Exceptions\FailedException;
 use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -187,6 +188,12 @@ trait BaseOperate
     {
         /* @var Model $model */
         $model = static::find($id);
+
+        if (in_array($this->getParentIdColumn(), $this->getFillable())
+            && $this->where($this->getParentIdColumn(), $model->id)->first()
+        ) {
+            throw new FailedException('请先删除子级');
+        }
 
         if ($force) {
             $deleted = $model->forceDelete();
