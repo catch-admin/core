@@ -11,8 +11,10 @@ use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\ViewController;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionFunction;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Terminal;
@@ -120,7 +122,7 @@ class CatchRouteList extends Command
      *
      * @return array
      */
-    protected function getRoutes()
+    protected function getRoutes(): array
     {
         $routes = collect($this->router->getRoutes())->map(function ($route) {
             return $this->getRouteInformation($route);
@@ -142,10 +144,11 @@ class CatchRouteList extends Command
     /**
      * Get the route information for a given route.
      *
-     * @param  \Illuminate\Routing\Route  $route
+     * @param Route $route
      * @return array
+     * @throws ReflectionException
      */
-    protected function getRouteInformation(Route $route)
+    protected function getRouteInformation(Route $route): array
     {
         return $this->filterRoute([
             'domain' => $route->domain(),
@@ -161,11 +164,11 @@ class CatchRouteList extends Command
     /**
      * Sort the routes by a given element.
      *
-     * @param  string  $sort
+     * @param string $sort
      * @param  array  $routes
      * @return array
      */
-    protected function sortRoutes($sort, array $routes)
+    protected function sortRoutes(string $sort, array $routes): array
     {
         return Arr::sort($routes, function ($route) use ($sort) {
             return $route[$sort];
@@ -178,7 +181,7 @@ class CatchRouteList extends Command
      * @param  array  $routes
      * @return array
      */
-    protected function pluckColumns(array $routes)
+    protected function pluckColumns(array $routes): array
     {
         return array_map(function ($route) {
             return Arr::only($route, $this->getColumns());
@@ -191,7 +194,7 @@ class CatchRouteList extends Command
      * @param  array  $routes
      * @return void
      */
-    protected function displayRoutes(array $routes)
+    protected function displayRoutes(array $routes): void
     {
         $routes = collect($routes);
 
@@ -203,10 +206,10 @@ class CatchRouteList extends Command
     /**
      * Get the middleware for the route.
      *
-     * @param  \Illuminate\Routing\Route  $route
+     * @param Route $route
      * @return string
      */
-    protected function getMiddleware($route)
+    protected function getMiddleware(Route $route): string
     {
         return collect($this->router->gatherRouteMiddleware($route))->map(function ($middleware) {
             return $middleware instanceof Closure ? 'Closure' : $middleware;
@@ -216,10 +219,11 @@ class CatchRouteList extends Command
     /**
      * Determine if the route has been defined outside of the application.
      *
-     * @param  \Illuminate\Routing\Route  $route
+     * @param Route $route
      * @return bool
+     * @throws ReflectionException
      */
-    protected function isVendorRoute(Route $route)
+    protected function isVendorRoute(Route $route): bool
     {
         if ($route->action['uses'] instanceof Closure) {
             $path = (new ReflectionFunction($route->action['uses']))
@@ -244,10 +248,10 @@ class CatchRouteList extends Command
     /**
      * Determine if the route uses a framework controller.
      *
-     * @param  \Illuminate\Routing\Route  $route
+     * @param Route $route
      * @return bool
      */
-    protected function isFrameworkController(Route $route)
+    protected function isFrameworkController(Route $route): bool
     {
         return in_array($route->getControllerClass(), [
             '\Illuminate\Routing\RedirectController',
@@ -259,7 +263,7 @@ class CatchRouteList extends Command
      * Filter the route by URI and / or name.
      *
      * @param  array  $route
-     * @return array|null
+     * @return mixed
      */
     protected function filterRoute(array $route)
     {
@@ -288,7 +292,7 @@ class CatchRouteList extends Command
      *
      * @return array
      */
-    protected function getHeaders()
+    protected function getHeaders(): array
     {
         return Arr::only($this->headers, array_keys($this->getColumns()));
     }
@@ -298,7 +302,7 @@ class CatchRouteList extends Command
      *
      * @return array
      */
-    protected function getColumns()
+    protected function getColumns(): array
     {
         return array_map('strtolower', $this->headers);
     }
@@ -309,7 +313,7 @@ class CatchRouteList extends Command
      * @param  array  $columns
      * @return array
      */
-    protected function parseColumns(array $columns)
+    protected function parseColumns(array $columns): array
     {
         $results = [];
 
@@ -327,10 +331,10 @@ class CatchRouteList extends Command
     /**
      * Convert the given routes to JSON.
      *
-     * @param  \Illuminate\Support\Collection  $routes
+     * @param Collection $routes
      * @return string
      */
-    protected function asJson($routes)
+    protected function asJson(Collection $routes): string
     {
         return $routes
             ->map(function ($route) {
@@ -345,10 +349,10 @@ class CatchRouteList extends Command
     /**
      * Convert the given routes to regular CLI output.
      *
-     * @param  \Illuminate\Support\Collection  $routes
+     * @param Collection $routes
      * @return array
      */
-    protected function forCli($routes)
+    protected function forCli(Collection $routes): array
     {
         $routes = $routes->map(
             fn ($route) => array_merge($route, [
@@ -414,10 +418,10 @@ class CatchRouteList extends Command
     /**
      * Get the formatted action for display on the CLI.
      *
-     * @param  array  $route
+     * @param array $route
      * @return string
      */
-    protected function formatActionForCli($route)
+    protected function formatActionForCli(array $route): string
     {
         ['action' => $action, 'name' => $name] = $route;
 
@@ -448,11 +452,11 @@ class CatchRouteList extends Command
     /**
      * Determine and return the output for displaying the number of routes in the CLI output.
      *
-     * @param  \Illuminate\Support\Collection  $routes
-     * @param  int  $terminalWidth
+     * @param Collection $routes
+     * @param int $terminalWidth
      * @return string
      */
-    protected function determineRouteCountOutput($routes, $terminalWidth)
+    protected function determineRouteCountOutput(Collection $routes, int $terminalWidth): string
     {
         $routeCountText = 'Showing ['.$routes->count().'] routes';
 
@@ -491,7 +495,7 @@ class CatchRouteList extends Command
      *
      * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['app', null, InputOption::VALUE_NONE, 'Show the app route list'],

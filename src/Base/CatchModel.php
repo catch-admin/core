@@ -47,9 +47,9 @@ abstract class CatchModel extends Model
      * @var string[]
      */
     protected array $defaultCasts = [
-        'created_at' => 'datetime:Y-m-d H:i:s',
+        'created_at' => 'datetime:Y-m-d H:i',
 
-        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i',
     ];
 
     protected array $defaultHidden = ['deleted_at'];

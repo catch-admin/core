@@ -21,6 +21,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
 /**
@@ -209,6 +210,28 @@ trait BaseOperate
     }
 
     /**
+     * 批量删除
+     *
+     * @param array|string $ids
+     * @param bool $force
+     * @return true
+     */
+    public function deletesBy(array|string $ids, bool $force = false): bool
+    {
+        if (is_string($ids)) {
+            $ids = explode(',', $ids);
+        }
+
+        DB::transaction(function () use ($ids, $force){
+            foreach ($ids as $id) {
+                $this->deleteBy($id, $force);
+            }
+        });
+
+        return true;
+    }
+
+    /**
      * disable or enable
      *
      * @param $id
@@ -226,6 +249,27 @@ trait BaseOperate
         if ($model->save() && in_array($this->getParentIdColumn(), $this->getFillable())) {
             $this->updateChildren($id, $field, $model->getAttribute($field));
         }
+
+        return true;
+    }
+
+    /**
+     *
+     * @param array|string $ids
+     * @param string $field
+     * @return true
+     */
+    public function togglesBy(array|string $ids, string $field = 'status'): bool
+    {
+        if (is_string($ids)) {
+            $ids = explode(',', $ids);
+        }
+
+        DB::transaction(function () use ($ids, $field){
+            foreach ($ids as $id) {
+                $this->toggleBy($id, $field);
+            }
+        });
 
         return true;
     }

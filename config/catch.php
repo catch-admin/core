@@ -136,6 +136,6 @@ return [
             \Catch\Middleware\JsonResponseMiddleware::class
         ],
 
-        'cache_path' => base_path('bootstrap/cache') . DIRECTORY_SEPARATOR . 'admin_route_cache.php'
+        // 'cache_path' => base_path('bootstrap/cache') . DIRECTORY_SEPARATOR . 'admin_route_cache.php'
     ],
 ];
