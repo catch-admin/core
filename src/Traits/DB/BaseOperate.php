@@ -214,17 +214,22 @@ trait BaseOperate
      *
      * @param array|string $ids
      * @param bool $force
+     * @param Closure|null $callback
      * @return true
      */
-    public function deletesBy(array|string $ids, bool $force = false): bool
+    public function deletesBy(array|string $ids, bool $force = false, Closure $callback = null): bool
     {
         if (is_string($ids)) {
             $ids = explode(',', $ids);
         }
 
-        DB::transaction(function () use ($ids, $force){
+        DB::transaction(function () use ($ids, $force, $callback){
             foreach ($ids as $id) {
                 $this->deleteBy($id, $force);
+            }
+
+            if ($callback) {
+                $callback($ids);
             }
         });
 
