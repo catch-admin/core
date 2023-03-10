@@ -14,6 +14,7 @@ namespace Catch\Providers;
 
 use Catch\CatchAdmin;
 use Catch\Contracts\ModuleRepositoryInterface;
+use Catch\Exceptions\Handler;
 use Catch\Support\DB\Query;
 use Catch\Support\Module\ModuleManager;
 use Illuminate\Container\Container;
@@ -26,6 +27,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
 use Catch\Support\Macros\MacrosRegister;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 
 /**
  * CatchAmin Service Provider
@@ -57,11 +59,9 @@ class CatchAdminServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerCommands();
-
         $this->registerModuleRepository();
-
+        $this->registerExceptionHandler();
         $this->publishConfig();
-
         $this->publishModuleMigration();
     }
 
@@ -104,7 +104,16 @@ class CatchAdminServiceProvider extends ServiceProvider
      */
     protected function registerEvents(): void
     {
-        Event::listen(RequestHandled::class, config('catch.response.request_handled_listener'));
+        if (isRequestFromDashboard()) {
+            Event::listen(RequestHandled::class, config('catch.response.request_handled_listener'));
+        }
+    }
+
+    protected function registerExceptionHandler()
+    {
+        if (isRequestFromDashboard()) {
+            $this->app->singleton(ExceptionHandler::class, Handler::class);
+        }
     }
 
     /**
