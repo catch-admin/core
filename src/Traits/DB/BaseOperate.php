@@ -115,7 +115,9 @@ trait BaseOperate
      */
     public function updateBy($id, array $data): mixed
     {
-        $updated = $this->where($this->getKeyName(), $id)->update($this->filterData($data));
+        $model = $this->where($this->getKeyName(), $id)->first();
+
+        $updated = $model->fill($this->filterData($data))->save();
 
         if ($updated) {
             $this->updateRelations($this->find($id), $data);
