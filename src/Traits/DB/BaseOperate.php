@@ -36,7 +36,7 @@ trait BaseOperate
      */
     public function getList(): mixed
     {
-        $builder = static::select(!property_exists($this, 'fields') ? '*' : $this->fields)
+        $builder = static::select(!property_exists($this, 'fields') ? ['*'] : $this->fields)
                     ->creator()
                     ->quickSearch();
 
