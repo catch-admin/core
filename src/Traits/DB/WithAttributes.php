@@ -46,7 +46,7 @@ trait WithAttributes
      *
      * @var array
      */
-    protected array $fields = [];
+    protected array $fields = ['*'];
 
 
     /**
