@@ -104,12 +104,15 @@ class CatchAdminServiceProvider extends ServiceProvider
      */
     protected function registerEvents(): void
     {
-        if (isRequestFromDashboard()) {
-            Event::listen(RequestHandled::class, config('catch.response.request_handled_listener'));
-        }
+        Event::listen(RequestHandled::class, config('catch.response.request_handled_listener'));
     }
 
-    protected function registerExceptionHandler()
+    /**
+     * register exception handler
+     *
+     * @return void
+     */
+    protected function registerExceptionHandler(): void
     {
         if (isRequestFromDashboard()) {
             $this->app->singleton(ExceptionHandler::class, Handler::class);

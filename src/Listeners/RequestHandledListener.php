@@ -17,13 +17,15 @@ class RequestHandledListener
      */
     public function handle(RequestHandled $event): void
     {
-        $response = $event->response;
+        if (isRequestFromDashboard()) {
+            $response = $event->response;
 
-        if ($response instanceof JsonResponse) {
-            $exception = $response->exception;
+            if ($response instanceof JsonResponse) {
+                $exception = $response->exception;
 
-            if ($response->getStatusCode() == SymfonyResponse::HTTP_OK && ! $exception) {
-                $response->setData($this->formatData($response->getData()));
+                if ($response->getStatusCode() == SymfonyResponse::HTTP_OK && !$exception) {
+                    $response->setData($this->formatData($response->getData()));
+                }
             }
         }
     }
