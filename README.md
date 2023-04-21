@@ -29,3 +29,16 @@ Please go to [catchadmin official](https://catchadmin.com/docs/3.0/intro)
 > Type(scope): subject
 
 例如修复 `CatchTable` 模块的 bug: **fix(scope?): 修复 some bugs **
+
+## use in octane
+设置 config/octane.php 中 `listeners`
+```php
+return [
+ 'listeners' => [
+        // received 事件中新增
+        RequestReceived::class => [
+           Catch\Octane\RegisterExceptionHandler::class
+        ],
+    ],
+]
+```
