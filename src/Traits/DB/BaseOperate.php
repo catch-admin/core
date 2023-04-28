@@ -138,8 +138,8 @@ trait BaseOperate
         $fillable = array_unique(array_merge($this->getFillable(), property_exists($this, 'form') ? $this->form : []));
 
         foreach ($data as $k => $val) {
-            if (is_null($val) || (is_string($val) && ! $val)) {
-                unset($data[$k]);
+            if ($this->autoNull2EmptyString && is_null($val)) {
+                $data[$k] = '';
             }
 
             if (! empty($fillable) && ! in_array($k, $fillable)) {

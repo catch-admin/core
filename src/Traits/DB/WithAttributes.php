@@ -70,6 +70,13 @@ trait WithAttributes
     protected bool $dataRange = false;
 
     /**
+     * null to empty string
+     *
+     * @var bool
+     */
+    protected bool $autoNull2EmptyString = true;
+
+    /**
      *
      * @param string $parentId
      * @return $this
@@ -162,6 +169,17 @@ trait WithAttributes
     public function setDataRange(bool $use = true): static
     {
         $this->dataRange = $use;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $auto
+     * @return $this
+     */
+    public function setAutoNull2EmptyString(bool $auto = true): static
+    {
+        $this->autoNull2EmptyString = $auto;
 
         return $this;
     }
