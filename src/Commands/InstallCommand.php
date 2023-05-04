@@ -158,19 +158,24 @@ class InstallCommand extends CatchCommand
     protected function publishConfig(): void
     {
         try {
-            Process::run(Application::formatCommandString('key:generate'))->throw();
-
-            Process::run(Application::formatCommandString('vendor:publish --tag=catch-config'))->throw();
-
-            Process::run(Application::formatCommandString('vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"'))->throw();
-
-            Process::run(Application::formatCommandString('catch:migrate user'))->throw();
-
-            Process::run(Application::formatCommandString('catch:migrate develop'))->throw();
-
-            Process::run(Application::formatCommandString('migrate'))->throw();
-
-            Process::run(Application::formatCommandString('catch:db:seed user'))->throw();
+            // mac os
+            if (Str::of(PHP_OS)->lower()->contains('dar')) {
+                exec(Application::formatCommandString('key:generate'));
+                exec(Application::formatCommandString('vendor:publish --tag=catch-config'));
+                exec(Application::formatCommandString('vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"'));
+                exec(Application::formatCommandString('catch:migrate user'));
+                exec(Application::formatCommandString('catch:migrate develop'));
+                exec(Application::formatCommandString('migrate'));
+                exec(Application::formatCommandString('catch:db:seed user'));
+            } else {
+                Process::run(Application::formatCommandString('key:generate'))->throw();
+                Process::run(Application::formatCommandString('vendor:publish --tag=catch-config'))->throw();
+                Process::run(Application::formatCommandString('vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"'))->throw();
+                Process::run(Application::formatCommandString('catch:migrate user'))->throw();
+                Process::run(Application::formatCommandString('catch:migrate develop'))->throw();
+                Process::run(Application::formatCommandString('migrate'))->throw();
+                Process::run(Application::formatCommandString('catch:db:seed user'))->throw();
+            }
         }catch (\Exception|\Throwable $e) {
             $this->error($e->getMessage());
             exit;
@@ -180,7 +185,7 @@ class InstallCommand extends CatchCommand
     /**
      * create database
      */
-    protected function askForCreatingDatabase()
+    protected function askForCreatingDatabase(): void
     {
         $appUrl = $this->askFor('请配置应用的 URL');
 
@@ -258,7 +263,7 @@ class InstallCommand extends CatchCommand
     /**
      * add prs4 autoload
      */
-    protected function addPsr4Autoload()
+    protected function addPsr4Autoload(): void
     {
         $composerFile = base_path().DIRECTORY_SEPARATOR.'composer.json';
 
@@ -276,7 +281,7 @@ class InstallCommand extends CatchCommand
     /**
      * admin installed
      */
-    public function installed()
+    public function installed(): void
     {
         $this->addPsr4Autoload();
 
