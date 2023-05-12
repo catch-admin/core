@@ -74,9 +74,13 @@ class Builder
                             $value = "{$params[$_field]}%";
                         } elseif ($opString->exactly('llike')) {
                             $value = "%{$params[$_field]}";
+                        // 时间搜索
+                        } elseif(Str::of($_field)->endsWith('_at') || Str::of($_field)->endsWith('_time')) {
+                            $value = is_string($params[$_field]) ? strtotime($params[$_field]) : $params[$_field];
                         } else {
                             $value = $params[$_field];
                         }
+
                         $wheres[] = [$field, $op, $value];
                     }
                 }
