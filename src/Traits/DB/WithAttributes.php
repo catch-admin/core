@@ -27,7 +27,7 @@ trait WithAttributes
     /**
      * @var string
      */
-    protected string $sortField = 'sort';
+    protected string $sortField = '';
 
     /**
      * @var bool

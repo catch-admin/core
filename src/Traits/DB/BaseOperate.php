@@ -50,12 +50,19 @@ trait BaseOperate
             $builder = call_user_func($this->beforeGetList, $builder);
         }
 
-        if (in_array($this->sortField, $this->getFillable())) {
-            $builder = $builder->orderBy($this->sortField, $this->sortDesc ? 'desc' : 'asc');
+        // 排序
+        if ($this->sortField && in_array($this->sortField, $this->getFillable())) {
+            $builder = $builder->orderBy($this->aliasField($this->sortField), $this->sortDesc ? 'desc' : 'asc');
         }
 
-        $builder = $builder->orderByDesc($this->getKeyName());
+        // 动态排序
+        $dynamicSortField = Request::get('sortField');
+        if ($dynamicSortField && $dynamicSortField <> $this->sortField) {
+            $builder = $builder->orderBy($this->aliasField($dynamicSortField),  Request::get('order', 'asc'));
+        }
+        $builder = $builder->orderByDesc($this->aliasField($this->getKeyName()));
 
+        // 分页
         if ($this->isPaginate) {
             return $builder->paginate(Request::get('limit', $this->perPage));
         }
