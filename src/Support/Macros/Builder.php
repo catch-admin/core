@@ -64,29 +64,44 @@ class Builder
                         [, $_field] = explode('.', $field);
                     }
 
-                    if (isset($params[$_field])) {
-                        $opString = Str::of($op)->lower();
-                        if ($opString->exactly('op')) {
-                            $value = implode(',', $params[$_field]);
-                        } elseif ($opString->exactly('like')) {
-                            $value = "%{$params[$_field]}%";
-                        } elseif ($opString->exactly('rlike')) {
-                            $value = "{$params[$_field]}%";
-                        } elseif ($opString->exactly('llike')) {
-                            $value = "%{$params[$_field]}";
-                        // 时间搜索
-                        } elseif(Str::of($_field)->endsWith('_at') || Str::of($_field)->endsWith('_time')) {
-                            $value = is_string($params[$_field]) ? strtotime($params[$_field]) : $params[$_field];
-                        } else {
-                            $value = $params[$_field];
+                    if (isset($params[$_field]) && $searchValue = $params[$_field]) {
+                        $operate = Str::of($op)->lower();
+                        $value = $searchValue;
+                        if ($operate->exactly('op')) {
+                            $value = implode(',', $searchValue);
                         }
 
-                        $wheres[] = [$field, $op, $value];
+                        if ($operate->exactly('like')) {
+                            $value = "%{$searchValue}%";
+                        }
+
+                        if ($operate->exactly('rlike')) {
+                            $value = $searchValue. '%';
+                        }
+
+                        if ($operate->exactly('llike')) {
+                            $value = '%' .$searchValue;
+                        }
+
+                        if (Str::of($_field)->endsWith('_at') || Str::of($_field)->endsWith('_time')) {
+                            $value = is_string($searchValue) ? strtotime($searchValue) : $searchValue;
+                        }
+
+                        $wheres[] = [$field, strtolower($op), $value];
                     }
                 }
             }
 
-            $this->where($wheres);
+            // 组装 where 条件
+            foreach ($wheres as $w) {
+                [$field, $op, $value] = $w;
+                if ($op == 'in') {
+                    // in 操作的值必须是数组，所以 value 必须更改成 array
+                    $this->whereIn($field, is_array($value) ? $value : explode(',', $value));
+                } else {
+                    $this->where($field, $op, $value);
+                }
+            }
 
             return $this;
         });
