@@ -18,6 +18,8 @@ use Catch\Support\DB\SoftDelete;
 use Catch\Traits\DB\BaseOperate;
 use Catch\Traits\DB\ScopeTrait;
 use Catch\Traits\DB\Trans;
+use Catch\Traits\DB\WithAttributes;
+use Catch\Traits\DB\WithSearch;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
@@ -29,7 +31,7 @@ use Illuminate\Database\Query\Builder;
  */
 abstract class CatchModel extends Model
 {
-    use BaseOperate, Trans, SoftDeletes, ScopeTrait;
+    use BaseOperate, Trans, SoftDeletes, ScopeTrait, WithAttributes;
 
     /**
      * unix timestamp

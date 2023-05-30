@@ -31,7 +31,7 @@ trait WithSearch
      */
     public function setSearchable(array $searchable): static
     {
-        $this->searchable = $searchable;
+        $this->searchable = array_merge($this->searchable,$searchable);
 
         return $this;
     }
