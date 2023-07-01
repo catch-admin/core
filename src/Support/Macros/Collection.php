@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Catch\Support\Macros;
 
+use Catch\Support\Excel\Export;
 use Catch\Support\Tree;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection as LaravelCollection;
@@ -18,6 +19,8 @@ class Collection
         $this->toOptions();
 
         $this->toTree();
+
+        $this->export();
     }
 
     /**
@@ -58,6 +61,45 @@ class Collection
                     ];
                 }
             })->values();
+        });
+    }
+
+    /**
+     * @return void
+     */
+    public function export(): void
+    {
+        LaravelCollection::macro(__FUNCTION__, function (array $header) {
+             $items = $this->toArray();
+             $export = new class($items, $header) extends Export {
+
+                 /**
+                  * @var array
+                  */
+                 protected array $items;
+
+                 /**
+                  * @param array $items
+                  * @param array $header
+                  */
+                 public function __construct(array $items, array $header)
+                 {
+                     $this->items = $items;
+
+                     $this->header = $header;
+                 }
+
+                 /**
+                  * @return array
+                  */
+                 public function array(): array
+                 {
+                     // TODO: Implement array() method.
+                     return $this->items;
+                 }
+             };
+
+             return $export->export();
         });
     }
 }

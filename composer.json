@@ -6,7 +6,8 @@
         "php": "^8.1",
         "ext-pdo": "*",
         "ext-zip": "*",
-        "laravel/sanctum": "^3.2"
+        "laravel/sanctum": "^3.2",
+        "maatwebsite/excel": "^3.1"
     },
     "license": "MIT",
     "autoload": {
