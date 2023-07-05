@@ -103,7 +103,18 @@ abstract class Export implements
      */
     public function download(string $filename = null): BinaryFileResponse
     {
-        return Excel::download($this, $filename ? : $this->getFilename());
+        $filename = $filename ? : $this->getFilename();
+        $writeType = $this->getWriteType();
+
+        return Excel::download(
+            $this,
+            $filename,
+            $writeType,
+            [
+                'filename' => $filename,
+                'write_type' => $writeType
+            ]
+        );
     }
 
     /**

@@ -21,6 +21,8 @@ class Collection
         $this->toTree();
 
         $this->export();
+
+        $this->download();
     }
 
     /**
@@ -72,34 +74,45 @@ class Collection
         LaravelCollection::macro(__FUNCTION__, function (array $header) {
              $items = $this->toArray();
              $export = new class($items, $header) extends Export {
-
-                 /**
-                  * @var array
-                  */
                  protected array $items;
-
-                 /**
-                  * @param array $items
-                  * @param array $header
-                  */
                  public function __construct(array $items, array $header)
                  {
                      $this->items = $items;
 
                      $this->header = $header;
                  }
-
-                 /**
-                  * @return array
-                  */
                  public function array(): array
                  {
                      // TODO: Implement array() method.
                      return $this->items;
                  }
              };
-
              return $export->export();
+        });
+    }
+
+    /**
+     * @return void
+     */
+    public function download(): void
+    {
+        LaravelCollection::macro(__FUNCTION__, function (array $header) {
+            $items = $this->toArray();
+            $export = new class($items, $header) extends Export {
+                protected array $items;
+                public function __construct(array $items, array $header)
+                {
+                    $this->items = $items;
+
+                    $this->header = $header;
+                }
+                public function array(): array
+                {
+                    // TODO: Implement array() method.
+                    return $this->items;
+                }
+            };
+            return $export->download();
         });
     }
 }
