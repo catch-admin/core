@@ -138,4 +138,12 @@ return [
 
         // 'cache_path' => base_path('bootstrap/cache') . DIRECTORY_SEPARATOR . 'admin_route_cache.php'
     ],
+
+    'excel' => [
+        'export' => [
+            'csv_limit' => 20000,
+
+            'path' => 'excel/export/'
+        ]
+    ]
 ];

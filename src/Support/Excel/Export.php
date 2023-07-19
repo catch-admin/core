@@ -23,14 +23,6 @@ abstract class Export implements
     WithColumnWidths
 {
     /**
-     *  when data length lt 20000
-     *  it will change csv
-     *
-     * @var int
-     */
-    protected int $toCsvLimit = 20000;
-
-    /**
      * data
      *
      * @var array
@@ -145,7 +137,9 @@ abstract class Export implements
      */
     protected function getWriteType(): string
     {
-        if ($this instanceof WithCustomCsvSettings && count($this->array()) >= $this->toCsvLimit) {
+        $toCsvLimit = config('catch.excel.export.csv_limit');
+
+        if ($this instanceof WithCustomCsvSettings && count($this->array()) >= $toCsvLimit) {
             return \Maatwebsite\Excel\Excel::CSV;
         }
 
@@ -160,7 +154,7 @@ abstract class Export implements
      */
     public function getExportPath(): string
     {
-        $path = sprintf('excel/export/%s', date('Ymd'));
+        $path = config('catch.excel.export.path') . date('Ymd');
 
         if (!is_dir($path) && !mkdir($path, 0777, true) && !is_dir($path)) {
             throw new FailedException(sprintf('Directory "%s" was not created', $path));
