@@ -84,7 +84,7 @@ class FileDriver implements ModuleRepositoryInterface
 
         $this->removeDirs($module);
 
-        File::put($this->moduleJson, $modules->push($module)->toJson(JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        File::put($this->moduleJson, $modules->push($module)->values()->toJson(JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
         return true;
     }
@@ -125,7 +125,7 @@ class FileDriver implements ModuleRepositoryInterface
             }
             $this->removeDirs($m);
             return $m;
-        })->toJson(JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        })->values()->toJson(JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
         return true;
     }
@@ -206,7 +206,7 @@ class FileDriver implements ModuleRepositoryInterface
      *
      * @param array $modules
      */
-    protected function removeDirs(array &$modules)
+    protected function removeDirs(array &$modules): void
     {
         if ($modules['dirs'] ?? false) {
             unset($modules['dirs']);
