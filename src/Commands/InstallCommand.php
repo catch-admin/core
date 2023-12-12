@@ -193,10 +193,7 @@ class InstallCommand extends CatchCommand
                 Process::run(Application::formatCommandString('migrate'))->throw();
                 Process::run(Application::formatCommandString('catch:db:seed user'))->throw();
                 if ($isInstallPermissionModule === '是') {
-                    //Process::run(Application::formatCommandString('catch:migrate permissions'))->throw();
-                    //Process::run(Application::formatCommandString('catch:db:seed permissions'))->throw();
                     $installer = CatchAdmin::getModuleInstaller('permissions');
-                    var_dump($installer);
                     $installer->install();
                 }
             }
