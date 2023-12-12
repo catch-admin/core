@@ -39,7 +39,7 @@ class CatchAdmin
      */
     public static function moduleRootPath(): string
     {
-        return self::makeDir(base_path(config('catch.module.root')).DIRECTORY_SEPARATOR);
+        return self::makeDir(base_path(config('catch.module.root', 'modules')).DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -138,7 +138,7 @@ class CatchAdmin
      */
     public static function getModuleRootNamespace(): string
     {
-        return config('catch.module.namespace').'\\';
+        return config('catch.module.namespace', 'Modules').'\\';
     }
 
     /**

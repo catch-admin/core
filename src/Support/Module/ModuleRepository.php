@@ -79,11 +79,7 @@ class ModuleRepository
      */
     public function show(string $name): Collection
     {
-        try {
-            return $this->moduleRepository->show($name);
-        } catch (Exception $e) {
-            throw new $e();
-        }
+        return $this->moduleRepository->show($name);
     }
 
     /**
