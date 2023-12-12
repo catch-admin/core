@@ -298,7 +298,7 @@ class InstallCommand extends CatchCommand
 
         $composerJson = json_decode(File::get(base_path().DIRECTORY_SEPARATOR.'composer.json'), true);
 
-        $composerJson['autoload']['psr-4'][CatchAdmin::getModuleRootNamespace()] = str_replace('\\', '/', config('catch.module.root'));
+        $composerJson['autoload']['psr-4'][CatchAdmin::getModuleRootNamespace()] = str_replace('\\', '/', CatchAdmin::moduleRoot());
 
         File::put($composerFile, json_encode($composerJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 

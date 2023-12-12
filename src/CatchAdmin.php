@@ -32,6 +32,11 @@ class CatchAdmin
         return static::VERSION;
     }
 
+    public static function moduleRoot()
+    {
+        return config('catch.module.root', 'modules');
+    }
+
     /**
      * module root path
      *
@@ -39,7 +44,7 @@ class CatchAdmin
      */
     public static function moduleRootPath(): string
     {
-        return self::makeDir(base_path(config('catch.module.root', 'modules')).DIRECTORY_SEPARATOR);
+        return self::makeDir(base_path(self::moduleRoot()).DIRECTORY_SEPARATOR);
     }
 
     /**
