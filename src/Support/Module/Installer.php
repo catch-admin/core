@@ -4,7 +4,9 @@ namespace Catch\Support\Module;
 
 use Catch\Contracts\ModuleRepositoryInterface;
 use Catch\Support\Composer;
+use Illuminate\Console\Application;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Process;
 
 /**
  * installer
@@ -32,9 +34,13 @@ abstract class Installer
      */
     protected function migrate(): void
     {
-        Artisan::call('catch:migrate', [
-            'module' => $this->info()['name']
-        ]);
+        if(app()->runningInConsole()) {
+            Process::run(Application::formatCommandString('catch:migrate '. $this->info()['name']))->throw();
+        } else {
+            Artisan::call('catch:migrate', [
+                'module' => $this->info()['name']
+            ]);
+        }
     }
 
     /**
@@ -42,9 +48,13 @@ abstract class Installer
      */
     protected function seed():void
     {
-        Artisan::call('catch:db:seed', [
-            'module' => $this->info()['name']
-        ]);
+        if (app()->runningInConsole()) {
+            Process::run(Application::formatCommandString('catch:db:seed '. $this->info()['name']))->throw();
+        } else {
+            Artisan::call('catch:db:seed', [
+                'module' => $this->info()['name']
+            ]);
+        }
     }
 
     /**

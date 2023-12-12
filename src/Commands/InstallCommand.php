@@ -13,6 +13,7 @@
 namespace Catch\Commands;
 
 use Catch\CatchAdmin;
+use Catch\Exceptions\FailedException;
 use Catch\Facade\Module;
 use Doctrine\DBAL\Exception;
 use Illuminate\Console\Application;
@@ -192,13 +193,15 @@ class InstallCommand extends CatchCommand
                 Process::run(Application::formatCommandString('migrate'))->throw();
                 Process::run(Application::formatCommandString('catch:db:seed user'))->throw();
                 if ($isInstallPermissionModule === '是') {
-                    Process::run(Application::formatCommandString('catch:migrate permissions'))->throw();
-                    Process::run(Application::formatCommandString('catch:db:seed permissions'))->throw();
+                    //Process::run(Application::formatCommandString('catch:migrate permissions'))->throw();
+                    //Process::run(Application::formatCommandString('catch:db:seed permissions'))->throw();
+                    $installer = CatchAdmin::getModuleInstaller('permissions');
+                    var_dump($installer);
+                    $installer->install();
                 }
             }
         }catch (\Exception|\Throwable $e) {
-            $this->error($e->getMessage());
-            exit;
+           throw new FailedException($e->getMessage());
         }
     }
 
