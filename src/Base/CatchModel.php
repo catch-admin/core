@@ -23,6 +23,8 @@ use Catch\Traits\DB\WithSearch;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
+use DateTimeInterface;
+use Carbon\Carbon;
 
 /**
  *
@@ -89,5 +91,16 @@ abstract class CatchModel extends Model
     public static function bootSoftDeletes(): void
     {
         static::addGlobalScope(new SoftDelete());
+    }
+
+    /**
+     * 重写 serializeDate
+     *
+     * @param DateTimeInterface $date
+     * @return string|null
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return Carbon::instance($date)->toISOString(true);
     }
 }
