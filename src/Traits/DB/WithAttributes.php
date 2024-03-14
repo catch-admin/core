@@ -54,10 +54,6 @@ trait WithAttributes
      */
     protected bool $isPaginate = true;
 
-    /**
-     * @var array
-     */
-    protected array $form = [];
 
     /**
      * @var array

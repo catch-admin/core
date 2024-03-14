@@ -36,7 +36,9 @@ trait BaseOperate
      */
     public function getList(): mixed
     {
-        $builder = static::select($this->fields)
+        $fields = property_exists($this, 'fields') ? $this->fields : ['*'];
+
+        $builder = static::select($fields)
                     ->creator()
                     ->quickSearch();
 
@@ -142,7 +144,7 @@ trait BaseOperate
     protected function filterData(array $data): array
     {
         // 表单保存的数据集合
-        $fillable = array_unique(array_merge($this->getFillable(), property_exists($this, 'form') ? $this->form : []));
+        $fillable = array_unique(array_merge($this->getFillable(), $this->getForm()));
 
         foreach ($data as $k => $val) {
             if ($this->autoNull2EmptyString && is_null($val)) {
