@@ -386,4 +386,112 @@ trait BaseOperate
 
         return $this;
     }
+
+    /**
+     *
+     * @param string $parentId
+     * @return $this
+     */
+    public function setParentIdColumn(string $parentId): static
+    {
+        $this->parentIdColumn = $parentId;
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param string $sortField
+     * @return $this
+     */
+    protected function setSortField(string $sortField): static
+    {
+        $this->sortField = $sortField;
+
+        return $this;
+    }
+
+    /**
+     *
+     * @return $this
+     */
+    protected function setPaginate(bool $isPaginate = true): static
+    {
+        $this->isPaginate = $isPaginate;
+
+        return $this;
+    }
+
+    /**
+     * whit form data
+     *
+     * @return $this
+     */
+    public function withoutForm(): static
+    {
+        if (property_exists($this, 'form') && ! empty($this->form)) {
+            $this->form = [];
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getForm(): array
+    {
+        if (property_exists($this, 'form') && ! empty($this->form)) {
+            return $this->form;
+        }
+
+        return [];
+    }
+
+    /**
+     * get parent id
+     *
+     * @return string
+     */
+    public function getParentIdColumn(): string
+    {
+        return $this->parentIdColumn;
+    }
+
+    /**
+     *
+     * @return array
+     */
+    public function getFormRelations(): array
+    {
+        if (property_exists($this, 'formRelations') && ! empty($this->form)) {
+            return $this->formRelations;
+        }
+
+        return [];
+    }
+
+    /**
+     * set data range
+     *
+     * @param bool $use
+     * @return $this
+     */
+    public function setDataRange(bool $use = true): static
+    {
+        $this->dataRange = $use;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $auto
+     * @return $this
+     */
+    public function setAutoNull2EmptyString(bool $auto = true): static
+    {
+        $this->autoNull2EmptyString = $auto;
+
+        return $this;
+    }
 }
