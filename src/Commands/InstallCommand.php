@@ -40,7 +40,7 @@ class InstallCommand extends CatchCommand
     /**
      * @var array|string[]
      */
-    private array $defaultExtensions = ['BCMath', 'Ctype', 'DOM', 'Fileinfo', 'JSON', 'Mbstring', 'OpenSSL', 'PCRE', 'PDO', 'Tokenizer', 'XML'];
+    private array $defaultExtensions = ['BCMath', 'Ctype', 'DOM', 'Fileinfo', 'JSON', 'Mbstring', 'OpenSSL', 'PCRE', 'PDO', 'Tokenizer', 'XML', 'pdo_mysql'];
 
     /**
      * handle
@@ -107,8 +107,8 @@ class InstallCommand extends CatchCommand
      */
     private function checkPHPVersion(): void
     {
-        if (version_compare(PHP_VERSION, '8.1.0', '<')) {
-            $this->error('php version should >= 8.1');
+        if (version_compare(PHP_VERSION, '8.2.0', '<')) {
+            $this->error('php version should >= 8.2');
         }
     }
 
