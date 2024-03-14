@@ -33,7 +33,7 @@ use Carbon\Carbon;
  */
 abstract class CatchModel extends Model
 {
-    use BaseOperate, Trans, SoftDeletes, ScopeTrait, WithAttributes;
+    use WithAttributes, BaseOperate, Trans, SoftDeletes, ScopeTrait;
 
     /**
      * unix timestamp

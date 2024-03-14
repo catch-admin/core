@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Request;
  */
 trait BaseOperate
 {
-    use WithAttributes, WithEvents, WithRelations;
+    use WithEvents, WithRelations;
 
     /**
      * @return mixed
