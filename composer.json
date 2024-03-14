@@ -3,12 +3,12 @@
     "description": "catch admin core package",
     "type": "library",
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "ext-pdo": "*",
         "ext-zip": "*",
-        "laravel/sanctum": "^3.2",
-        "maatwebsite/excel": "^3.1",
-        "laravel/prompts": "^0.1.4"
+        "laravel/sanctum": "^v4.0.0",
+        "maatwebsite/excel": "^3.1.55",
+        "laravel/prompts": "^v0.1.16"
     },
     "license": "MIT",
     "autoload": {
