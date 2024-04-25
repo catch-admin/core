@@ -145,5 +145,8 @@ return [
 
             'path' => 'excel/export/'
         ]
-    ]
+    ],
+
+    // view path
+    'views_path' => base_path('web'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR),
 ];
