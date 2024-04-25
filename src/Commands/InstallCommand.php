@@ -51,8 +51,7 @@ class InstallCommand extends CatchCommand
     public function handle(): void
     {
         $this->reinstall();
-$this->askForCreatingDatabase();
-die;
+
         try {
             // 如果没有 .env 文件
            if (! File::exists(app()->environmentFile())) {
