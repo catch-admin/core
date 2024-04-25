@@ -37,6 +37,10 @@ class InstallCommand extends CatchCommand
 
     protected $description = 'install catch admin';
 
+    protected string $webRepo = 'https://gitee.com/catchadmin/catch-admin-vue.git';
+
+    protected string $appUrl;
+
     /**
      * @var array|string[]
      */
@@ -207,10 +211,11 @@ class InstallCommand extends CatchCommand
         if (windows_os()) {
              $appUrl = $this->askFor('请配置应用的 URL');
 
-            if ($appUrl && ! str_contains($appUrl, 'http://') && ! str_contains($appUrl, 'https://')) {
+             if ($appUrl && ! str_contains($appUrl, 'http://') && ! str_contains($appUrl, 'https://')) {
                 $appUrl = 'http://'.$appUrl;
-            }
+             }
 
+             $this->appUrl = $appUrl;
              $databaseName = $this->askFor('请输入数据库名称');
              $prefix = $this->askFor('请输入数据库表前缀', '');
              $dbHost = $this->askFor('请输入数据库主机地址', '127.0.0.1');
@@ -230,6 +235,7 @@ class InstallCommand extends CatchCommand
             if ($appUrl && ! str_contains($appUrl, 'http://') && ! str_contains($appUrl, 'https://')) {
                 $appUrl = 'http://'.$appUrl;
             }
+            $this->appUrl = $appUrl;
             $databaseName = text('请输入数据库名称', required: '请输入数据库名称', validate: fn($value)=> preg_match("/[a-zA-Z\_]{1,100}/", $value) ? null : '数据库名称只支持a-z和A-Z以及下划线_');
             $prefix = text('请输入数据库表前缀', 'eg. catch_');
             $dbHost = text('请输入数据库主机地址', 'eg. 127.0.0.1', '127.0.0.1', required: '请输入数据库主机地址');
@@ -314,6 +320,8 @@ class InstallCommand extends CatchCommand
      */
     public function installed(): void
     {
+        $this->cloneWeb();
+
         $this->addPsr4Autoload();
 
         $this->info('🎉 CatchAdmin 已安装, 欢迎!');
@@ -380,6 +388,41 @@ class InstallCommand extends CatchCommand
             $modules = Module::all();
             foreach ($modules as $module) {
                 Module::delete($module['name']);
+            }
+        }
+    }
+
+    protected function cloneWeb(): void
+    {
+        $packageJson = File::exists(app()->basePath() .DIRECTORY_SEPARATOR . 'package.json');
+
+        if (File::exists($packageJson)) {
+            return;
+        }
+        $webPath = app()->basePath('web');
+
+        if (! is_dir($webPath)) {
+            $this->info('开始下载前端项目');
+
+            shell_exec("git clone {$this->webRepo} web");
+
+            if (is_dir($webPath)) {
+                $this->info('下载前端项目成功');
+                $this->info('设置镜像源');
+                shell_exec('yarn config set registry https://registry.npmmirror.com');
+                $this->info('安装前端依赖，如果安装失败，请检查是否已安装了前端 yarn 管理工具，或者因为网络等原因');
+                shell_exec('cd ' . $webPath . ' && yarn install');
+                $this->info('手动启动使用 yarn dev');
+                $this->info('项目启动后不要忘记设置 web/.env 里面的环境变量 VITE_BASE_URL');
+                $this->info('安装前端依赖成功，开始启动前端项目');
+                file_put_contents($webPath . DIRECTORY_SEPARATOR . '.env', <<<STR
+VITE_BASE_URL=$this->appUrl/api
+VITE_APP_NAME=后台管理
+STR
+                );
+                shell_exec("cd {$webPath} && yarn dev");
+            } else {
+                $this->error('下载前端项目失败, 请到该仓库下载 https://gitee.com/catchadmin/catch-admin-vue');
             }
         }
     }
