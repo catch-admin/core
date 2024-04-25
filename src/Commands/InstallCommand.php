@@ -39,7 +39,7 @@ class InstallCommand extends CatchCommand
 
     protected string $webRepo = 'https://gitee.com/catchadmin/catch-admin-vue.git';
 
-    protected string $appUrl;
+    protected string $appUrl = '';
 
     /**
      * @var array|string[]
@@ -420,7 +420,7 @@ VITE_BASE_URL=$this->appUrl/api
 VITE_APP_NAME=后台管理
 STR
                 );
-                shell_exec("cd {$webPath} && yarn dev");
+                // shell_exec("cd {$webPath} && yarn dev");
             } else {
                 $this->error('下载前端项目失败, 请到该仓库下载 https://gitee.com/catchadmin/catch-admin-vue');
             }
