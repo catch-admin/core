@@ -57,7 +57,6 @@ class InstallCommand extends CatchCommand
            if (! File::exists(app()->environmentFile())) {
                $this->detectionEnvironment();
                $this->askForCreatingDatabase();
-               $this->copyEnvFile();
            }
 
             $this->publishConfig();
@@ -143,8 +142,6 @@ class InstallCommand extends CatchCommand
         if (! File::exists(app()->environmentFilePath())) {
             $this->error('【.env】创建失败, 请重新尝试或者手动创建！');
         }
-
-        File::put(app()->environmentFile(), implode("\n", explode("\n", $this->getEnvFileContent())));
     }
 
     /**
@@ -261,6 +258,7 @@ class InstallCommand extends CatchCommand
             }
         }
 
+        $this->copyEnvFile();
         File::put(app()->environmentFile(), implode("\n", $env));
 
         app()->bootstrapWith([
