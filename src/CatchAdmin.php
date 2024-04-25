@@ -21,7 +21,7 @@ use Illuminate\Support\Str;
 
 class CatchAdmin
 {
-    public const VERSION = '0.3.2';
+    public const VERSION = '0.3.3';
 
     /**
      * version
