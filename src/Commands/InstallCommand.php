@@ -51,13 +51,14 @@ class InstallCommand extends CatchCommand
     public function handle(): void
     {
         $this->reinstall();
-
+$this->askForCreatingDatabase();
+die;
         try {
             // 如果没有 .env 文件
            if (! File::exists(app()->environmentFile())) {
                $this->detectionEnvironment();
                $this->askForCreatingDatabase();
-               // $this->copyEnvFile();
+               $this->copyEnvFile();
            }
 
             $this->publishConfig();
@@ -210,7 +211,7 @@ class InstallCommand extends CatchCommand
         if (windows_os()) {
              $appUrl = $this->askFor('请配置应用的 URL');
 
-            if ($appUrl && ! Str::contains($appUrl, 'http://') && ! Str::contains($appUrl, 'https://')) {
+            if ($appUrl && ! str_contains($appUrl, 'http://') && ! str_contains($appUrl, 'https://')) {
                 $appUrl = 'http://'.$appUrl;
             }
 
@@ -229,6 +230,10 @@ class InstallCommand extends CatchCommand
                 placeholder: 'eg. https://127.0.0.1:8080',
                 required: '应用的 URL 必须填写',
                 validate: fn($value) => filter_var($value, FILTER_VALIDATE_URL) !== false ? null : '应用URL不符合规则');
+
+            if ($appUrl && ! str_contains($appUrl, 'http://') && ! str_contains($appUrl, 'https://')) {
+                $appUrl = 'http://'.$appUrl;
+            }
             $databaseName = text('请输入数据库名称', required: '请输入数据库名称', validate: fn($value)=> preg_match("/[a-zA-Z\_]{1,100}/", $value) ? null : '数据库名称只支持a-z和A-Z以及下划线_');
             $prefix = text('请输入数据库表前缀', 'eg. catch_');
             $dbHost = text('请输入数据库主机地址', 'eg. 127.0.0.1', '127.0.0.1', required: '请输入数据库主机地址');
