@@ -175,7 +175,7 @@ class InstallCommand extends CatchCommand
             // mac os
             if (Str::of(PHP_OS)->lower()->contains('dar')) {
                 exec(Application::formatCommandString('key:generate'));
-                exec(Application::formatCommandString('vendor:publish --tag=catch-config'));
+                exec(Application::formatCommandString('vendor:publish --tag=catch-config --force'));
                 exec(Application::formatCommandString('vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"'));
                 exec(Application::formatCommandString('catch:migrate user'));
                 exec(Application::formatCommandString('catch:migrate develop'));
@@ -187,7 +187,7 @@ class InstallCommand extends CatchCommand
                 }
             } else {
                 Process::run(Application::formatCommandString('key:generate'))->throw();
-                Process::run(Application::formatCommandString('vendor:publish --tag=catch-config'))->throw();
+                Process::run(Application::formatCommandString('vendor:publish --tag=catch-config --force'))->throw();
                 Process::run(Application::formatCommandString('vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"'))->throw();
                 Process::run(Application::formatCommandString('catch:migrate user'))->throw();
                 Process::run(Application::formatCommandString('catch:migrate develop'))->throw();
@@ -198,6 +198,7 @@ class InstallCommand extends CatchCommand
                     $installer->install();
                 }
             }
+            $this->info('模块安装成功，模块信息存储在[storage/app/module.json]文件');
         }catch (\Exception|\Throwable $e) {
            throw new FailedException($e->getMessage());
         }
@@ -394,7 +395,7 @@ class InstallCommand extends CatchCommand
 
     protected function cloneWeb(): void
     {
-        $packageJson = File::exists(app()->basePath() .DIRECTORY_SEPARATOR . 'package.json');
+        $packageJson = app()->basePath() .DIRECTORY_SEPARATOR . 'package.json';
 
         if (File::exists($packageJson)) {
             return;
