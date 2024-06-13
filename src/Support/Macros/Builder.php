@@ -76,10 +76,12 @@ class Builder
                         }
 
                         if ($operate->exactly('rlike')) {
+                            $op = 'like';
                             $value = $searchValue. '%';
                         }
 
                         if ($operate->exactly('llike')) {
+                            $op = 'like';
                             $value = '%' .$searchValue;
                         }
 
