@@ -50,7 +50,7 @@ class Builder
 
             // filter null & empty string
             $params = array_filter($params, function ($value) {
-                return (is_string($value) && strlen($value)) || is_numeric($value);
+                return (is_string($value) && strlen($value)) || is_numeric($value) || (is_array($value) && !empty($value));
             });
 
             $wheres = [];
