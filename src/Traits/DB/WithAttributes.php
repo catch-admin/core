@@ -71,4 +71,11 @@ trait WithAttributes
      * @var bool
      */
     protected bool $autoNull2EmptyString = true;
+
+    /**
+     * 是否填充创建人
+     *
+     * @var bool
+     */
+    protected bool $isFillCreatorId = true;
 }

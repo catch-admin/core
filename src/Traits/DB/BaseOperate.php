@@ -160,7 +160,7 @@ trait BaseOperate
             }
         }
 
-        if (in_array($this->getCreatorIdColumn(), $this->getFillable())) {
+        if ($this->isFillCreatorId && in_array($this->getCreatorIdColumn(), $this->getFillable())) {
             $data['creator_id'] = Auth::guard(getGuardName())->id();
         }
 
@@ -493,6 +493,17 @@ trait BaseOperate
     public function setAutoNull2EmptyString(bool $auto = true): static
     {
         $this->autoNull2EmptyString = $auto;
+
+        return $this;
+    }
+
+    /**
+     * @param true $is
+     * @return $this
+     */
+    public function fillCreatorId(bool $is = true): static
+    {
+        $this->isFillCreatorId = $is;
 
         return $this;
     }
