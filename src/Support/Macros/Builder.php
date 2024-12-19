@@ -100,6 +100,8 @@ class Builder
                 if ($op == 'in') {
                     // in 操作的值必须是数组，所以 value 必须更改成 array
                     $this->whereIn($field, is_array($value) ? $value : explode(',', $value));
+                } else if ($op == 'between') {
+                    $this->whereBetween($field, $value);
                 } else {
                     $this->where($field, $op, $value);
                 }
