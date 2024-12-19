@@ -16,6 +16,7 @@ namespace Catch\Base;
 
 use Catch\Support\DB\SoftDelete;
 use Catch\Traits\DB\BaseOperate;
+use Catch\Traits\DB\DateformatTrait;
 use Catch\Traits\DB\ScopeTrait;
 use Catch\Traits\DB\Trans;
 use Catch\Traits\DB\WithAttributes;
@@ -33,7 +34,7 @@ use Carbon\Carbon;
  */
 abstract class CatchModel extends Model
 {
-    use WithAttributes, BaseOperate, Trans, SoftDeletes, ScopeTrait;
+    use WithAttributes, BaseOperate, Trans, SoftDeletes, ScopeTrait, DateformatTrait;
 
     /**
      * unix timestamp
@@ -91,16 +92,5 @@ abstract class CatchModel extends Model
     public static function bootSoftDeletes(): void
     {
         static::addGlobalScope(new SoftDelete());
-    }
-
-    /**
-     * 重写 serializeDate
-     *
-     * @param DateTimeInterface $date
-     * @return string|null
-     */
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return Carbon::instance($date)->toISOString(true);
     }
 }
