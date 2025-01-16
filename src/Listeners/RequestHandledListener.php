@@ -3,6 +3,7 @@
 namespace Catch\Listeners;
 
 use Catch\Enums\Code;
+use Catch\Support\ResponseBuilder;
 use Illuminate\Foundation\Http\Events\RequestHandled;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Illuminate\Http\JsonResponse;
@@ -20,11 +21,17 @@ class RequestHandledListener
         if (isRequestFromDashboard()) {
             $response = $event->response;
 
-            if ($response instanceof JsonResponse) {
-                $exception = $response->exception;
+            // 自定义响应内容
+            if ($response instanceof ResponseBuilder) {
+                $event->response = $response();
+            } else {
+                // 标准响应
+                if ($response instanceof JsonResponse) {
+                    $exception = $response->exception;
 
-                if ($response->getStatusCode() == SymfonyResponse::HTTP_OK && !$exception) {
-                    $response->setData($this->formatData($response->getData()));
+                    if ($response->getStatusCode() == SymfonyResponse::HTTP_OK && !$exception) {
+                        $response->setData($this->formatData($response->getData()));
+                    }
                 }
             }
         }
@@ -36,24 +43,13 @@ class RequestHandledListener
      */
     protected function formatData(mixed $data): array
     {
-        $responseData = [
-            'code' => Code::SUCCESS->value(),
-            'message' => Code::SUCCESS->message(),
-        ];
+        return array_merge(
+            [
+                'code' => Code::SUCCESS->value(),
+                'message' => Code::SUCCESS->message(),
+            ],
 
-        if (is_object($data) && property_exists($data, 'per_page')
-            && property_exists($data, 'total')
-            && property_exists($data, 'current_page')) {
-            $responseData['data'] = $data->data;
-            $responseData['total'] = $data->total;
-            $responseData['limit'] = $data->per_page;
-            $responseData['page'] = $data->current_page;
-
-            return $responseData;
-        }
-
-        $responseData['data'] = $data;
-
-        return $responseData;
+            format_response_data($data)
+        );
     }
 }
