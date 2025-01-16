@@ -21,6 +21,7 @@ use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
 use Catch\Base\CatchModel;
 use Catch\CatchAdmin;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * load commands
@@ -202,5 +203,39 @@ if (! function_exists('routesAreCached')) {
     function routesAreCached(): bool
     {
         return file_exists(CatchAdmin::getRouteCachePath());
+    }
+}
+
+
+/**
+ * 格式化返回
+ */
+if (! function_exists('format_response_data')) {
+    function format_response_data(mixed $data): array
+    {
+        $responseData = [];
+
+        if ($data instanceof LengthAwarePaginator) {
+            $responseData['data'] = $data->items();
+            $responseData['total'] = $data->total();
+            $responseData['limit'] = $data->perPage();
+            $responseData['page'] = $data->currentPage();
+            return $responseData;
+        } else {
+            if (is_object($data)
+                && property_exists($data, 'per_page')
+                && property_exists($data, 'total')
+                && property_exists($data, 'current_page')) {
+                $responseData['data'] = $data->data;
+                $responseData['total'] = $data->total;
+                $responseData['limit'] = $data->per_page;
+                $responseData['page'] = $data->current_page;
+                return $responseData;
+            }
+        }
+
+        $responseData['data'] = $data;
+
+        return $responseData;
     }
 }
