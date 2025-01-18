@@ -165,12 +165,6 @@ class InstallCommand extends CatchCommand
      */
     protected function publishConfig(): void
     {
-        if (windows_os()) {
-            $isInstallPermissionModule = $this->askFor('是否安装权限模块?', '是');
-        } else {
-            $isInstallPermissionModule = confirm('是否安装权限模块?', yes: '是', no: '否');
-        }
-
         try {
             // mac os
             if (Str::of(PHP_OS)->lower()->contains('dar')) {
@@ -181,10 +175,7 @@ class InstallCommand extends CatchCommand
                 exec(Application::formatCommandString('catch:migrate develop'));
                 exec(Application::formatCommandString('migrate'));
                 exec(Application::formatCommandString('catch:db:seed user'));
-                if ($isInstallPermissionModule) {
-                    exec(Application::formatCommandString('catch:migrate permissions'));
-                    exec(Application::formatCommandString('catch:db:seed permissions'));
-                }
+                exec(Application::formatCommandString('catch:module:install permissions'));
             } else {
                 Process::run(Application::formatCommandString('key:generate'))->throw();
                 Process::run(Application::formatCommandString('vendor:publish --tag=catch-config --force'))->throw();
@@ -193,10 +184,8 @@ class InstallCommand extends CatchCommand
                 Process::run(Application::formatCommandString('catch:migrate develop'))->throw();
                 Process::run(Application::formatCommandString('migrate'))->throw();
                 Process::run(Application::formatCommandString('catch:db:seed user'))->throw();
-                if ($isInstallPermissionModule === '是') {
-                    $installer = CatchAdmin::getModuleInstaller('permissions');
-                    $installer->install();
-                }
+                $installer = CatchAdmin::getModuleInstaller('permissions');
+                $installer->install();
             }
             $this->info('模块安装成功，模块信息存储在[storage/app/module.json]文件');
         }catch (\Exception|\Throwable $e) {
