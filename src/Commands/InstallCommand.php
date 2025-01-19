@@ -229,7 +229,7 @@ class InstallCommand extends CatchCommand
             $databaseName = text('请输入数据库名称', required: '请输入数据库名称', validate: fn($value)=> preg_match("/[a-zA-Z\_]{1,100}/", $value) ? null : '数据库名称只支持a-z和A-Z以及下划线_');
             $prefix = text('请输入数据库表前缀', 'eg. catch_');
             $dbHost = text('请输入数据库主机地址', 'eg. 127.0.0.1', '127.0.0.1', required: '请输入数据库主机地址');
-            $dbPort = text('请输入数据库主机地址', 'eg. 3306', '3306', required: '请输入数据库主机地址');
+            $dbPort = text('请输入数据的端口号', 'eg. 3306', '3306', required: '请输入数据库主机地址');
             $dbUsername = text('请输入数据的用户名', 'eg. root', 'root', required: '请输入数据的用户名');
             $dbPassword = text('请输入数据库密码', required: '请输入数据库密码');
 
