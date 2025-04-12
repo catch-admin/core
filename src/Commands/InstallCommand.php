@@ -198,14 +198,9 @@ class InstallCommand extends CatchCommand
      */
     protected function askForCreatingDatabase(): void
     {
+        $defaultUrl = 'http://127.0.0.1:8000';
         if (windows_os()) {
-             $appUrl = $this->askFor('请配置应用的 URL');
-
-             if ($appUrl && ! str_contains($appUrl, 'http://') && ! str_contains($appUrl, 'https://')) {
-                $appUrl = 'http://'.$appUrl;
-             }
-
-             $this->appUrl = $appUrl;
+             $this->appUrl = $defaultUrl;
              $databaseName = $this->askFor('请输入数据库名称');
              $prefix = $this->askFor('请输入数据库表前缀', '');
              $dbHost = $this->askFor('请输入数据库主机地址', '127.0.0.1');
@@ -217,15 +212,7 @@ class InstallCommand extends CatchCommand
                 $dbPassword = $this->askFor('确认数据库密码为空吗?');
              }
         } else {
-            $appUrl = text(label:'请配置应用的 URL',
-                placeholder: 'eg. https://127.0.0.1:8080',
-                required: '应用的 URL 必须填写',
-                validate: fn($value) => filter_var($value, FILTER_VALIDATE_URL) !== false ? null : '应用URL不符合规则');
-
-            if ($appUrl && ! str_contains($appUrl, 'http://') && ! str_contains($appUrl, 'https://')) {
-                $appUrl = 'http://'.$appUrl;
-            }
-            $this->appUrl = $appUrl;
+            $this->appUrl = $defaultUrl;
             $databaseName = text('请输入数据库名称', required: '请输入数据库名称', validate: fn($value)=> preg_match("/[a-zA-Z\_]{1,100}/", $value) ? null : '数据库名称只支持a-z和A-Z以及下划线_');
             $prefix = text('请输入数据库表前缀', 'eg. catch_');
             $dbHost = text('请输入数据库主机地址', 'eg. 127.0.0.1', '127.0.0.1', required: '请输入数据库主机地址');
@@ -240,7 +227,7 @@ class InstallCommand extends CatchCommand
 
         foreach ($env as &$value) {
             foreach ([
-                'APP_URL' => $appUrl,
+                'APP_URL' => $defaultUrl,
                 'DB_HOST' => $dbHost,
                 'DB_PORT' => $dbPort,
                 'DB_DATABASE' => $databaseName,
@@ -356,6 +343,7 @@ class InstallCommand extends CatchCommand
         $this->info('支 持: https://github.com/jaguarjack/catchadmin');
         $this->info('文 档: https://catchadmin.com/docs/3.0/intro');
         $this->info('官 网: https://catchadmin.com');
+        $this->info('🌤 使用 composer run dev 启动开发之旅');
     }
 
 
