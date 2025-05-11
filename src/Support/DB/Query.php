@@ -4,6 +4,7 @@ namespace Catch\Support\DB;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class Query
 {
@@ -18,13 +19,13 @@ class Query
     public static function listen(): void
     {
         DB::listen(function ($query) {
-            $sql = str_replace(
-                '?',
-                '%s',
-                sprintf('[%s] '.$query->sql.' | %s ms'.PHP_EOL, date('Y-m-d H:i'), $query->time)
+            $formattedString = sprintf('[%s] %s | %s ms'.PHP_EOL,
+                date('Y-m-d H:i'),
+                $query->sql,
+                $query->time
             );
 
-            static::$log .= vsprintf($sql, $query->bindings);
+            static::$log .= Str::of($formattedString)->replaceArray('?', $query->bindings)->toString();
         });
     }
 
