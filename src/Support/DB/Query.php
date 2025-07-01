@@ -18,15 +18,17 @@ class Query
      */
     public static function listen(): void
     {
-        DB::listen(function ($query) {
-            $formattedString = sprintf('[%s] %s | %s ms'.PHP_EOL,
-                date('Y-m-d H:i'),
-                $query->sql,
-                $query->time
-            );
-
-            static::$log .= Str::of($formattedString)->replaceArray('?', $query->bindings)->toString();
-        });
+        try {
+            DB::listen(function ($query) {
+                $date = date('Y-m-d H:i');
+                $sql = "[$date] {$query->sql} | {$query->time} ms \n";
+                foreach ($query->bindings as $binding) {
+                    $sql = preg_replace('/\?/', $binding, $sql, 1);
+                }
+                static::$log .= $sql;
+            });
+        } catch (Throwable|Exception $e) {
+        }
     }
 
 
