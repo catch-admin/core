@@ -93,4 +93,27 @@ abstract class CatchModel extends Model
     {
         static::addGlobalScope(new SoftDelete());
     }
+
+
+    /**
+     * 覆盖 restore 方法
+     *
+     * 修改 deleted_at 默认值
+     */
+    public function restore(): bool
+    {
+        if ($this->fireModelEvent('restoring') === false) {
+            return false;
+        }
+
+        $this->{$this->getDeletedAtColumn()} = 0;
+
+        $this->exists = true;
+
+        $result = $this->save();
+
+        $this->fireModelEvent('restored', false);
+
+        return $result;
+    }
 }
