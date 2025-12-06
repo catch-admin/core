@@ -49,6 +49,8 @@ class InstallCommand extends CatchCommand
 
     protected string $appUrl = 'http://127.0.0.1:8000';
 
+    protected string $appName;
+
     /**
      * @var array|string[]
      */
@@ -292,9 +294,9 @@ class InstallCommand extends CatchCommand
      */
     protected function askForCreatingDatabase(): void
     {
-        $appName = text('请输入应用名称', required: '应用名称必须填写');
+        $this->appName = text('请输入应用名称', required: '应用名称必须填写');
 
-        $appUrl = text(
+        $this->appUrl = text(
             label: '请配置应用的 URL',
             placeholder: 'eg. http://127.0.0.1:8000',
             default: $this->isProd ? 'https://' : 'http://127.0.0.1:8000',
@@ -336,8 +338,8 @@ class InstallCommand extends CatchCommand
 
         // 写入 .env
         $this->createEnvFile(
-            $appName,
-            $appUrl,
+            $this->appName,
+            $this->appUrl,
             $this->defaultConnection,
             $dbHost,
             $dbPort,
@@ -396,7 +398,10 @@ class InstallCommand extends CatchCommand
     protected function installFrontProject(): void
     {
         try {
+            $this->cloneWeb();
+
             Process::run('yarn config set registry https://registry.npmmirror.com');
+
             $progress = progress(label: '安装前端依赖', steps: 100);
 
             $advance = 0;
@@ -412,6 +417,8 @@ class InstallCommand extends CatchCommand
             $process->wait();
             $progress->advance(100);
             $progress->finish();
+
+            $this->createWebEnv();
         } catch (\Exception $exception) {
             $this->output->error('安装前端依赖失败，请检查是否已安装了前端 yarn 管理工具，或者因为网络等原因');
         }
@@ -444,7 +451,7 @@ class InstallCommand extends CatchCommand
  \ __ __ __ __ _ __ _ __ enjoy it ! _ __ __ __ __ __ __ ___ _ @
  版本: %s
  初始账号: catch@admin.com
- 初始密码: catchadmin', CatchAdmin::VERSION));
+ 初始密码: catchadmin', '🚀 5.x'));
 
         $this->support();
     }
@@ -518,25 +525,40 @@ class InstallCommand extends CatchCommand
 
         // 如果不是生产环境，创建前端项目 .env
         if (! $this->isProd) {
-            File::put($this->webEnv(), implode("\n", [
-                'VITE_BASE_URL='.$appUrl.'/api/',
-                'VITE_APP_NAME='.$appName,
-            ]));
-
-            // 这里面判断是否成功
-            if (! File::exists($this->webEnv())) {
-                $this->info('请手动在根目录前端 web 目录下创建 .env 配置文件, 添加以下内容');
-                $this->info("VITE_BASE_URL={$appUrl}/api/");
-                $this->info("VITE_APP_NAME={$appName}");
-            }
+            $this->createWebEnv();
         }
 
         $this->appUrl = $appUrl;
     }
 
+    /**
+     * @return string
+     */
     protected function webEnv(): string
     {
         return app()->basePath('web').DIRECTORY_SEPARATOR.'.env';
+    }
+
+    /**
+     * @return void
+     */
+    protected function createWebEnv(): void
+    {
+        if (! is_dir(base_path('web'))) {
+            return;
+        }
+
+        File::put($this->webEnv(), implode("\n", [
+            'VITE_BASE_URL='.$this->appUrl.'/api/',
+            'VITE_APP_NAME='.$this->appName,
+        ]));
+
+        // 这里面判断是否成功
+        if (! File::exists($this->webEnv())) {
+            $this->info('请手动在根目录前端 web 目录下创建 .env 配置文件, 添加以下内容');
+            $this->info("VITE_BASE_URL={$this->appUrl}/api/");
+            $this->info("VITE_APP_NAME={$this->appName}");
+        }
     }
 
     protected function rollback(): void
