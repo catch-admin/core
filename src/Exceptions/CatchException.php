@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2021 https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin-laravel/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -14,18 +14,14 @@ declare(strict_types=1);
 
 namespace Catch\Exceptions;
 
+use Catch\Enums\Code;
 use Catch\Enums\Enum;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Catch\Enums\Code;
 
 abstract class CatchException extends HttpException
 {
     protected $code = 0;
 
-    /**
-     * @param string $message
-     * @param int|Code $code
-     */
     public function __construct(string $message = '', int|Code $code = 0)
     {
         if ($code instanceof Enum) {
@@ -41,8 +37,6 @@ abstract class CatchException extends HttpException
 
     /**
      * status code
-     *
-     * @return int
      */
     public function statusCode(): int
     {
@@ -51,15 +45,13 @@ abstract class CatchException extends HttpException
 
     /**
      * render
-     *
-     * @return array
      */
     public function render(): array
     {
         return [
             'code' => $this->code,
 
-            'message' => $this->message
+            'message' => $this->message,
         ];
     }
 }

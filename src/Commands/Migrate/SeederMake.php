@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2021 https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin-laravel/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -34,12 +34,11 @@ class SeederMake extends CatchCommand
      */
     protected $description = 'make module seeder';
 
-
     /**
-     *
-     * @return void
      * @throws \Exception
+     *
      * @author CatchAdmin
+     *
      * @time 2021年08月01日
      */
     public function handle(): void
@@ -51,7 +50,7 @@ class SeederMake extends CatchCommand
         if (File::exists($file)) {
             $answer = $this->ask($file.' already exists, Did you want replace it?', 'Y');
 
-            if (! Str::of($answer)->lower()->exactly('y')) {
+            if (!Str::of($answer)->lower()->exactly('y')) {
                 exit;
             }
         }
@@ -68,7 +67,6 @@ class SeederMake extends CatchCommand
     /**
      * seeder content
      *
-     * @return string
      * @throws \Exception
      */
     protected function getSeederContent(): string
@@ -78,8 +76,6 @@ class SeederMake extends CatchCommand
 
     /**
      * seeder name
-     *
-     * @return string
      */
     protected function getSeederName(): string
     {

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Catch\Support\Macros;
 
-use Illuminate\Support\Str;
+use Catch\Support\DB\SoftDelete;
 use Illuminate\Database\Eloquent\Builder as LaravelBuilder;
+use Illuminate\Support\Str;
 
 class Builder
 {
@@ -19,12 +20,12 @@ class Builder
         $this->quickSearch();
 
         $this->tree();
+
+        $this->restores();
     }
 
     /**
      * where like
-     *
-     * @return void
      */
     public function whereLike(): void
     {
@@ -33,16 +34,18 @@ class Builder
         });
     }
 
-
     /**
      * quick search
-     *
-     * @return void
      */
     public function quickSearch(): void
     {
-        LaravelBuilder::macro(__FUNCTION__, function (array $params = []) {
+        LaravelBuilder::macro(__FUNCTION__, function (array $params = [], ?\Closure $callback = null) {
             $params = array_merge(request()->all(), $params);
+
+            // 转换数据
+            if (! is_null($callback)) {
+                $params = $callback($params);
+            }
 
             if (! property_exists($this->model, 'searchable')) {
                 return $this;
@@ -50,7 +53,7 @@ class Builder
 
             // filter null & empty string
             $params = array_filter($params, function ($value) {
-                return (is_string($value) && strlen($value)) || is_numeric($value) || (is_array($value) && !empty($value));
+                return (is_string($value) && strlen($value)) || is_numeric($value);
             });
 
             $wheres = [];
@@ -64,33 +67,37 @@ class Builder
                         [, $_field] = explode('.', $field);
                     }
 
-                    if (isset($params[$_field]) && $searchValue = $params[$_field]) {
-                        $operate = Str::of($op)->lower();
-                        $value = $searchValue;
-                        if ($operate->exactly('op')) {
-                            $value = implode(',', $searchValue);
-                        }
-
-                        if ($operate->exactly('like')) {
-                            $value = "%{$searchValue}%";
-                        }
-
-                        if ($operate->exactly('rlike')) {
-                            $op = 'like';
-                            $value = $searchValue. '%';
-                        }
-
-                        if ($operate->exactly('llike')) {
-                            $op = 'like';
-                            $value = '%' .$searchValue;
-                        }
-
-                        if (Str::of($_field)->endsWith('_at') || Str::of($_field)->endsWith('_time')) {
-                            $value = is_string($searchValue) ? strtotime($searchValue) : $searchValue;
-                        }
-
-                        $wheres[] = [$field, strtolower($op), $value];
+                    // 检查参数
+                    $searchValue = $params[$_field] ?? null;
+                    if (is_null($searchValue)) {
+                        continue;
                     }
+
+                    $operate = Str::of($op)->lower();
+                    $value = $searchValue;
+                    if ($operate->exactly('op')) {
+                        $value = implode(',', $searchValue);
+                    }
+
+                    if ($operate->exactly('like')) {
+                        $value = "%{$searchValue}%";
+                    }
+
+                    if ($operate->exactly('rlike')) {
+                        $op = 'like';
+                        $value = $searchValue.'%';
+                    }
+
+                    if ($operate->exactly('llike')) {
+                        $op = 'like';
+                        $value = '%'.$searchValue;
+                    }
+
+                    if (Str::of($_field)->endsWith('_at') || Str::of($_field)->endsWith('_time')) {
+                        $value = is_string($searchValue) ? strtotime($searchValue) : $searchValue;
+                    }
+
+                    $wheres[] = [$field, strtolower($op), $value];
                 }
             }
 
@@ -115,7 +122,6 @@ class Builder
      * where like
      *
      * @time 2021年08月06日
-     * @return void
      */
     public function tree(): void
     {
@@ -123,6 +129,18 @@ class Builder
             $fields = array_merge([$id, $parentId], $fields);
 
             return $this->get($fields)->toTree(0, $parentId);
+        });
+    }
+
+    /**
+     * @return void
+     */
+    public function restores(): void
+    {
+        LaravelBuilder::macro(__FUNCTION__, function () {
+            return $this->withoutGlobalScope(SoftDelete::class)->update([
+                'deleted_at' => 0,
+            ]);
         });
     }
 }

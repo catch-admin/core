@@ -1,4 +1,5 @@
 <?php
+
 namespace Catch\Traits\DB;
 
 use Carbon\Carbon;
@@ -6,7 +7,6 @@ use DateTimeInterface;
 
 trait DateformatTrait
 {
-
     /**
      * @var string
      */
@@ -35,5 +35,19 @@ trait DateformatTrait
         }
 
         return Carbon::instance($date)->setTimezone(config('app.timezone'))->format($this->timeFormat);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function dateFormatCasts(): array
+    {
+        $format = config('catch.model.date_format', 'Y-m-d H:i:s');
+
+        return [
+            'created_at' => "datetime:{$format}",
+
+            'updated_at' => "datetime:{$format}"
+        ];
     }
 }

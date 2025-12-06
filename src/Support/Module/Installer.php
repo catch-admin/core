@@ -2,11 +2,12 @@
 
 namespace Catch\Support\Module;
 
+use Catch\CatchAdmin;
 use Catch\Contracts\ModuleRepositoryInterface;
+use Catch\Facade\Module;
 use Catch\Support\Composer;
-use Illuminate\Console\Application;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Process;
 
 /**
  * installer
@@ -15,8 +16,6 @@ abstract class Installer
 {
     /**
      * construct
-     *
-     * @param ModuleRepositoryInterface $moduleRepository
      */
     public function __construct(protected ModuleRepositoryInterface $moduleRepository)
     {
@@ -24,21 +23,30 @@ abstract class Installer
 
     /**
      * module info
+     */
+    abstract protected function info(): array;
+
+    /**
+     * 获取模块信息
      *
      * @return array
      */
-    abstract protected function info(): array;
+    public function getInfo()
+    {
+        return $this->info();
+    }
 
     /**
      * migrate
      */
     protected function migrate(): void
     {
-        if(app()->runningInConsole()) {
-            Process::run(Application::formatCommandString('catch:migrate '. $this->info()['name']))->throw();
+        if (app()->runningInConsole()) {
+            $migrationStr = sprintf('catch:migrate %s', $this->info()['name']);
+            command($migrationStr);
         } else {
             Artisan::call('catch:migrate', [
-                'module' => $this->info()['name']
+                'module' => $this->info()['name'],
             ]);
         }
     }
@@ -46,36 +54,30 @@ abstract class Installer
     /**
      * seed
      */
-    protected function seed():void
+    protected function seed(): void
     {
         if (app()->runningInConsole()) {
-            Process::run(Application::formatCommandString('catch:db:seed '. $this->info()['name']))->throw();
+            $seedStr = sprintf('catch:db:seed %s', $this->info()['name']);
+            command($seedStr);
         } else {
             Artisan::call('catch:db:seed', [
-                'module' => $this->info()['name']
+                'module' => $this->info()['name'],
             ]);
         }
     }
 
     /**
      * require packages
-     *
-     * @return void
      */
     abstract protected function requirePackages(): void;
 
-
     /**
      * remove packages
-     *
-     * @return void
      */
     abstract protected function removePackages(): void;
 
     /**
      * uninstall
-     *
-     * @return void
      */
     public function uninstall(): void
     {
@@ -86,8 +88,6 @@ abstract class Installer
 
     /**
      * invoke
-     *
-     * @return void
      */
     public function install(): void
     {
@@ -99,12 +99,25 @@ abstract class Installer
         $this->seed();
 
         $this->requirePackages();
+
+        // 获取依赖的模块
+        if (method_exists($this, 'dependencies')) {
+            $dependencies = $this->dependencies();
+
+            $enabledModules = Module::getEnabled()->pluck('name')->merge(Collection::make(config('catch.module.default')));
+
+            foreach ($dependencies as $dependency) {
+                if ($enabledModules->contains($dependency)) {
+                    continue;
+                }
+                $moduleInstaller = CatchAdmin::getModuleInstaller($dependency);
+                $moduleInstaller->install();
+            }
+        }
     }
 
     /**
      * composer installer
-     *
-     * @return Composer
      */
     protected function composer(): Composer
     {

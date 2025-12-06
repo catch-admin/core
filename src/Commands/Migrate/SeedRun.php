@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2021 https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin-laravel/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -44,8 +44,6 @@ class SeedRun extends CatchCommand
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
     public function handle(): void
     {
@@ -70,9 +68,11 @@ class SeedRun extends CatchCommand
                 if (File::exists($file->getRealPath())) {
                     $class = require_once $file->getRealPath();
                     $class = new $class();
-                        $class->run();
+                    $class->run();
                 }
             }
         }
+
+        $this->info('seed run success');
     }
 }

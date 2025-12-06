@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017 ~ now https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017 ~ now https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -14,33 +14,32 @@ declare(strict_types=1);
 
 namespace Catch;
 
+use Catch\Contracts\ModuleRepositoryInterface;
 use Catch\Support\Module\Installer;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
 class CatchAdmin
 {
-    public const VERSION = '0.4.8';
+    public const VERSION = '1.0.0';
 
     /**
      * version
-     *
      */
     public static function version(): string
     {
         return static::VERSION;
     }
 
-    public static function moduleRoot()
+    public static function moduleRoot(): string
     {
-        return config('catch.module.root', 'modules');
+        return config('catch.module.root', 'modules/');
     }
 
     /**
      * module root path
-     *
-     * @return string
      */
     public static function moduleRootPath(): string
     {
@@ -49,9 +48,6 @@ class CatchAdmin
 
     /**
      * make dir
-     *
-     * @param string $dir
-     * @return string
      */
     public static function makeDir(string $dir): string
     {
@@ -64,10 +60,6 @@ class CatchAdmin
 
     /**
      * module dir
-     *
-     * @param string $module
-     * @param bool $make
-     * @return string
      */
     public static function getModulePath(string $module, bool $make = true): string
     {
@@ -80,9 +72,6 @@ class CatchAdmin
 
     /**
      * delete module path
-     *
-     * @param string $module
-     * @return bool
      */
     public static function deleteModulePath(string $module): bool
     {
@@ -95,9 +84,6 @@ class CatchAdmin
 
     /**
      * module path exists
-     *
-     * @param string $module
-     * @return bool
      */
     public static function isModulePathExist(string $module): bool
     {
@@ -106,9 +92,6 @@ class CatchAdmin
 
     /**
      * module migration dir
-     *
-     * @param string $module
-     * @return string
      */
     public static function getModuleMigrationPath(string $module): string
     {
@@ -117,9 +100,6 @@ class CatchAdmin
 
     /**
      * module seeder dir
-     *
-     * @param string $module
-     * @return string
      */
     public static function getModuleSeederPath(string $module): string
     {
@@ -128,8 +108,6 @@ class CatchAdmin
 
     /**
      * get modules dir
-     *
-     * @return array
      */
     public static function getModulesPath(): array
     {
@@ -138,8 +116,6 @@ class CatchAdmin
 
     /**
      * get module root namespace
-     *
-     * @return string
      */
     public static function getModuleRootNamespace(): string
     {
@@ -148,9 +124,6 @@ class CatchAdmin
 
     /**
      * get module root namespace
-     *
-     * @param $moduleName
-     * @return string
      */
     public static function getModuleNamespace($moduleName): string
     {
@@ -159,9 +132,6 @@ class CatchAdmin
 
     /**
      * model namespace
-     *
-     * @param $moduleName
-     * @return string
      */
     public static function getModuleModelNamespace($moduleName): string
     {
@@ -170,20 +140,12 @@ class CatchAdmin
 
     /**
      * getServiceProviders
-     *
-     * @param $moduleName
-     * @return string
      */
     public static function getModuleServiceProviderNamespace($moduleName): string
     {
         return self::getModuleNamespace($moduleName).'Providers\\';
     }
 
-    /**
-     *
-     * @param $moduleName
-     * @return string
-     */
     public static function getModuleServiceProvider($moduleName): string
     {
         return self::getModuleServiceProviderNamespace($moduleName).ucfirst($moduleName).'ServiceProvider';
@@ -191,9 +153,6 @@ class CatchAdmin
 
     /**
      * controller namespace
-     *
-     * @param $moduleName
-     * @return string
      */
     public static function getModuleControllerNamespace($moduleName): string
     {
@@ -202,9 +161,6 @@ class CatchAdmin
 
     /**
      * getModuleRequestNamespace
-     *
-     * @param $moduleName
-     * @return string
      */
     public static function getModuleRequestNamespace($moduleName): string
     {
@@ -213,9 +169,6 @@ class CatchAdmin
 
     /**
      * getModuleRequestNamespace
-     *
-     * @param $moduleName
-     * @return string
      */
     public static function getModuleEventsNamespace($moduleName): string
     {
@@ -224,21 +177,14 @@ class CatchAdmin
 
     /**
      * getModuleRequestNamespace
-     *
-     * @param $moduleName
-     * @return string
      */
     public static function getModuleListenersNamespace($moduleName): string
     {
         return self::getModuleNamespace($moduleName).'Listeners\\';
     }
 
-
     /**
      * module provider dir
-     *
-     * @param string $module
-     * @return string
      */
     public static function getModuleProviderPath(string $module): string
     {
@@ -247,9 +193,6 @@ class CatchAdmin
 
     /**
      * module model dir
-     *
-     * @param string $module
-     * @return string
      */
     public static function getModuleModelPath(string $module): string
     {
@@ -258,9 +201,6 @@ class CatchAdmin
 
     /**
      * module controller dir
-     *
-     * @param string $module
-     * @return string
      */
     public static function getModuleControllerPath(string $module): string
     {
@@ -269,9 +209,6 @@ class CatchAdmin
 
     /**
      * module request dir
-     *
-     * @param string $module
-     * @return string
      */
     public static function getModuleRequestPath(string $module): string
     {
@@ -280,9 +217,6 @@ class CatchAdmin
 
     /**
      * module request dir
-     *
-     * @param string $module
-     * @return string
      */
     public static function getModuleEventPath(string $module): string
     {
@@ -291,9 +225,6 @@ class CatchAdmin
 
     /**
      * module request dir
-     *
-     * @param string $module
-     * @return string
      */
     public static function getModuleListenersPath(string $module): string
     {
@@ -302,9 +233,6 @@ class CatchAdmin
 
     /**
      * commands path
-     *
-     * @param string $module
-     * @return string
      */
     public static function getCommandsPath(string $module): string
     {
@@ -313,37 +241,26 @@ class CatchAdmin
 
     /**
      * commands namespace
-     *
-     * @param string $module
-     * @return string
      */
     public static function getCommandsNamespace(string $module): string
     {
         return self::getModuleNamespace($module).'Commands\\';
     }
 
-
     /**
      * module route
-     *
-     * @param string $module
-     * @param string $routeName
-     * @return string
      */
     public static function getModuleRoutePath(string $module, string $routeName = 'route.php'): string
     {
-        $path = self::getModulePath($module). 'routes' . DIRECTORY_SEPARATOR;
+        $path = self::getModulePath($module).'routes'.DIRECTORY_SEPARATOR;
 
         self::makeDir($path);
 
-        return $path . $routeName;
+        return $path.$routeName;
     }
 
     /**
      * module route.php exists
-     *
-     * @param string $module
-     * @return bool
      */
     public static function isModuleRouteExists(string $module): bool
     {
@@ -351,32 +268,13 @@ class CatchAdmin
     }
 
     /**
-     * module views path
-     *
-     * @param string $module
-     * @return string
-     */
-    public static function getModuleViewsPath(string $module): string
-    {
-        return self::makeDir(self::getModulePath($module).'views'.DIRECTORY_SEPARATOR);
-    }
-
-    /**
      * relative path
-     *
-     * @param $path
-     * @return string
      */
     public static function getModuleRelativePath($path): string
     {
         return Str::replaceFirst(base_path(), '.', $path);
     }
 
-    /**
-     *
-     * @param string $module
-     * @return Installer
-     */
     public static function getModuleInstaller(string $module): Installer
     {
         $installer = self::getModuleNamespace($module).'Installer';
@@ -388,11 +286,8 @@ class CatchAdmin
         throw new \RuntimeException("Installer [$installer] Not Found");
     }
 
-
     /**
      * get module
-     *
-     * @return array
      */
     public static function parseFromRouteAction(): array
     {
@@ -400,26 +295,19 @@ class CatchAdmin
 
         $controllerNamespace = Str::of($controllerNamespace)->lower()->remove('controller')->explode('\\');
 
-
         $controller = $controllerNamespace->pop();
-
 
         $module = $controllerNamespace->get(1);
 
         return [$module, $controller, $action];
     }
 
-
     /**
-     *
-     * @param string $module
-     * @param string $controller
-     * @return array
      * @throws \ReflectionException
      */
     public static function getControllerActions(string $module, string $controller): array
     {
-        $controller = self::getModuleControllerNamespace($module) . Str::of($controller)->ucfirst()->append('Controller')->toString();
+        $controller = self::getModuleControllerNamespace($module).Str::of($controller)->ucfirst()->append('Controller')->toString();
 
         $reflectionClass = new \ReflectionClass($controller);
 
@@ -434,14 +322,29 @@ class CatchAdmin
         return $actions;
     }
 
+    /**
+     * @throws BindingResolutionException
+     */
+    public static function getAllModules(): mixed
+    {
+        return app()->make(ModuleRepositoryInterface::class)->all();
+    }
 
     /**
-     * get route cache path
-     *
-     * @return string
+     * @return array
      */
-    public static function getRouteCachePath(): string
+    public static function getAllProviders(): array
     {
-        return config('catch.route.cache_path', base_path('bootstrap/cache') . DIRECTORY_SEPARATOR . 'admin_route_cache.php');
+        $dirs = File::directories(self::moduleRootPath());
+
+        $providers = [];
+        foreach ($dirs as $dir) {
+            $provider = self::getModuleServiceProvider(pathinfo($dir, PATHINFO_BASENAME));
+            if (class_exists($provider)) {
+                $providers[] = $provider;
+            }
+        }
+
+        return $providers;
     }
 }

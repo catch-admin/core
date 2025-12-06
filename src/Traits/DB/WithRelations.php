@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2021 https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin-laravel/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -26,8 +26,6 @@ trait WithRelations
 {
     /**
      * when create
-     *
-     * @param array $data
      */
     protected function createRelations(array $data): void
     {
@@ -48,13 +46,9 @@ trait WithRelations
         }
     }
 
-
-     /**
-      * when updated
-      *
-      * @param Model $model
-      * @param array $data
-      */
+    /**
+     * when updated
+     */
     public function updateRelations(Model $model, array $data): void
     {
         foreach ($this->getRelationsData($data) as $relation => $relationData) {
@@ -67,30 +61,23 @@ trait WithRelations
         }
     }
 
-
-     /**
-      *
-      * @param Model $model
-      */
     public function deleteRelations(Model $model): void
     {
-        $relations = $this->getRelations();
+        $relations = $this->getFormRelations();
         foreach ($relations as $relation) {
-            $isRelation = $model->{$relation}();
-            // BelongsToMany
-            if ($isRelation instanceof BelongsToMany) {
-                $isRelation->detach();
+            if (method_exists($model, $relation)) {
+                $isRelation = $model->{$relation}();
+                // BelongsToMany
+                if ($isRelation instanceof BelongsToMany) {
+                    $isRelation->detach();
+                }
             }
         }
     }
 
-
-     /**
-      * get relations data
-      *
-      * @param array $data
-      * @return array
-      */
+    /**
+     * get relations data
+     */
     protected function getRelationsData(array $data): array
     {
         $relations = $this->getFormRelations();

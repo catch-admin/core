@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2021 https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin-laravel/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -19,19 +19,28 @@ namespace Catch\Traits\DB;
  */
 trait WithSearch
 {
-    /**
-     * @var array $searchable
-     */
     public array $searchable = [];
 
+    public ?\Closure $quickSearchCallback = null;
+
     /**
-     *
-     * @param array $searchable
      * @return $this
      */
     public function setSearchable(array $searchable): static
     {
-        $this->searchable = array_merge($this->searchable,$searchable);
+        $this->searchable = $searchable;
+
+        return $this;
+    }
+
+    /**
+     * 设置快速搜索回调，用于转换数据
+     *
+     * @return $this
+     */
+    public function setQuickSearchCallback(\Closure $callback): static
+    {
+        $this->quickSearchCallback = $callback;
 
         return $this;
     }

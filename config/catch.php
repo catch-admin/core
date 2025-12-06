@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2021 https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -13,54 +13,46 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | catch-admin default middleware
+    | catch-admin 超级管理员
     |--------------------------------------------------------------------------
     |
-    | where you can set default middlewares
+    | 可以设置超级管理的用户 ID
+    | 支持数组
     |
-    */
-    'middleware_group' => [
-
-    ],
-
-    /*
     |--------------------------------------------------------------------------
-    | catch-admin catch_auth_middleware_alias
-    |--------------------------------------------------------------------------
-    |
-    | where you can set default middlewares
-    |
-    */
-    'catch_auth_middleware_alias' => [
-
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | catch-admin super admin id
-    |--------------------------------------------------------------------------
-    |
-    | where you can set super admin id
-    |
     */
     'super_admin' => 1,
 
+    /*
+    |--------------------------------------------------------------------------
+    | catch-admin 请求允许
+    |--------------------------------------------------------------------------
+    |
+    | 默认允许 GET 请求通过 RBAC 权限
+    |
+    |--------------------------------------------------------------------------
+    */
     'request_allowed' => true,
 
     /*
     |--------------------------------------------------------------------------
-    | catch-admin module setting
+    | catch-admin 模块设置
     |--------------------------------------------------------------------------
     |
-    | the root where module generate
-    | the namespace is module root namespace
-    | the default dirs is module generate default dirs
+    | 设置模块根目录
+    | 设置模块的根命名空间
+    | 设置模块默认生成的文件夹
+    |
+    |--------------------------------------------------------------------------
     */
     'module' => [
         'root' => 'modules',
 
         'namespace' => 'Modules',
 
+        /**
+         * 默认启动的模块
+         */
         'default' => ['develop', 'user', 'common'],
 
         'default_dirs' => [
@@ -71,61 +63,79 @@ return [
             'Http'.DIRECTORY_SEPARATOR.'Controllers'.DIRECTORY_SEPARATOR,
 
             'Models'.DIRECTORY_SEPARATOR,
-
-            'views'.DIRECTORY_SEPARATOR,
         ],
 
-        // storage module information
-        // which driver should be used?
+        // 模块存储驱动
+        // 默认使用文件驱动
         'driver' => [
             // currently, catchadmin support file and database
             // the default is driver
             'default' => 'file',
 
             // use database driver
-            'table_name' => 'admin_modules'
+            'table_name' => 'admin_modules',
         ],
 
         /**
-         * module routes collection
-         *
+         * 模块路由集合
          */
         'routes' => [],
+
+        /**
+         * 模块是否自动加载
+         *
+         * 如果设置成 true，模块会自动全部加载
+         */
+        'autoload' => env('CATCH_MODULE_AUTOLOAD', false),
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | catch-admin response
+    | catch-admin 响应
     |--------------------------------------------------------------------------
     */
     'response' => [
-        // it's a controller middleware, it's set in CatchController
-        // if you not need json response, don't extend CatchController
+        // JSON 响应, 保证响应数据都是 json
         'always_json' => \Catch\Middleware\JsonResponseMiddleware::class,
 
-        // response listener
-        // it  listens [RequestHandled] event, if you don't need this
-        // you can change this config
-        'request_handled_listener' => \Catch\Listeners\RequestHandledListener::class
+        // 响应监听者
+        // 监听[RequestHandled]事件
+        'request_handled_listener' => \Catch\Listeners\RequestHandledListener::class,
     ],
 
     /*
    |--------------------------------------------------------------------------
-   | database sql log
+   | 数据库 SQL 日志
    |--------------------------------------------------------------------------
    */
-    'listen_db_log' => true,
+    'listen_db_log' => env('APP_DEBUG', true),
 
     /*
    |--------------------------------------------------------------------------
-   | admin auth model
+   | DB 日志通道
+   |
+   | 需要在 logging 配置对应的日志记录通道，默认使用 query
+   |--------------------------------------------------------------------------
+   */
+    'query_log_channel' => env('QUERY_LOG_CHANNEL', 'query'),
+
+    /*
+   |--------------------------------------------------------------------------
+   | 管理员授权认证模型
    |--------------------------------------------------------------------------
    */
     'auth_model' => \Modules\User\Models\User::class,
 
     /*
    |--------------------------------------------------------------------------
-   | route config
+   | 管理员授权 Guard
+   |--------------------------------------------------------------------------
+   */
+    'auth' => 'admin',
+
+    /*
+   |--------------------------------------------------------------------------
+   | 路由配置
    |--------------------------------------------------------------------------
    */
     'route' => [
@@ -133,20 +143,78 @@ return [
 
         'middlewares' => [
             \Catch\Middleware\AuthMiddleware::class,
-            \Catch\Middleware\JsonResponseMiddleware::class
+            \Catch\Middleware\JsonResponseMiddleware::class,
+        ],
+    ],
+
+    /*
+   |--------------------------------------------------------------------------
+   | 前端 Vue 视图文件夹路径
+   |
+   | 如果不设置，将不会生成相关的 Vue 文件
+   |--------------------------------------------------------------------------
+   */
+    'views_path' => base_path('web'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR),
+
+    /*
+   |--------------------------------------------------------------------------
+   | 开启系统接口日志分析
+   |
+   | 接口日志依赖 Redis，提高性能
+   |--------------------------------------------------------------------------
+   */
+    'system_api_log' => env('CATCH_SYSTEM_API_LOG', false),
+
+    /*
+   |--------------------------------------------------------------------------
+   | 图片处理
+   |
+   | 默认使用 GD
+   |--------------------------------------------------------------------------
+   */
+    'image' => [
+        'driver' => env('CATCH_IMAGE_DRIVER', 'gd'),
+
+        'options' => [
+
         ],
 
-        // 'cache_path' => base_path('bootstrap/cache') . DIRECTORY_SEPARATOR . 'admin_route_cache.php'
+        /**
+         * 默认读取磁盘
+         */
+        'read_from' => env('CATCH_IMAGE_READ_FROM', 'uploads'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | 后台缓存统一管理
+    |
+    | 配置后台缓存前缀，便于清理后台管理的缓存
+    |--------------------------------------------------------------------------
+    */
+    'admin_cache_key' => env('CATCH_ADMIN_CACHE_KEY', 'admin_dashboard_'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | 模型相关配置
+    |
+    | 配置模型的配置
+    |--------------------------------------------------------------------------
+    */
+    'model' => [
+        // created_at & updated_at format
+        'date_format' => 'Y-m-d H:i:s'
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Excel 配置
+    |--------------------------------------------------------------------------
+    */
     'excel' => [
-        'export' => [
-            'csv_limit' => 20000,
-
-            'path' => 'excel/export/'
-        ]
-    ],
-
-    // view path
-    'views_path' => base_path('web'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR),
+        /**
+         * 导出路径, 相对于 storage 目录得相对路径
+         */
+        'export_path' => 'excel/export',
+    ]
 ];

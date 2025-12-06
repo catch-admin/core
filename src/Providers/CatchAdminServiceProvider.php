@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017 ~ now https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017 ~ now https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -16,18 +16,18 @@ use Catch\CatchAdmin;
 use Catch\Contracts\ModuleRepositoryInterface;
 use Catch\Exceptions\Handler;
 use Catch\Support\DB\Query;
+use Catch\Support\Macros\MacrosRegister;
 use Catch\Support\Module\ModuleManager;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Http\Events\RequestHandled;
+use Illuminate\Routing\ResourceRegistrar;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
-use Catch\Support\Macros\MacrosRegister;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 
 /**
  * CatchAmin Service Provider
@@ -37,23 +37,20 @@ class CatchAdminServiceProvider extends ServiceProvider
     /**
      * boot
      *
-     * @return void
-     * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
      */
     public function boot(): void
     {
+        $this->bootMacros();
         $this->bootDefaultModuleProviders();
         $this->bootModuleProviders();
         $this->registerEvents();
         $this->listenDBLog();
-        $this->app->make(MacrosRegister::class)->boot();
     }
 
     /**
      * register
      *
-     * @return void
      * @throws ReflectionException
      */
     public function register(): void
@@ -65,11 +62,19 @@ class CatchAdminServiceProvider extends ServiceProvider
         $this->publishModuleMigration();
     }
 
+    /**
+     * @throws BindingResolutionException
+     */
+    protected function bootMacros(): void
+    {
+        $this->app->make(MacrosRegister::class)->boot();
+        // 资源路由注册器
+        $this->app->bind(ResourceRegistrar::class, \Catch\Support\ResourceRegistrar::class);
+    }
 
     /**
      * register commands
      *
-     * @return void
      * @throws ReflectionException
      */
     protected function registerCommands(): void
@@ -79,8 +84,6 @@ class CatchAdminServiceProvider extends ServiceProvider
 
     /**
      * bind module repository
-     *
-     * @return void
      */
     protected function registerModuleRepository(): void
     {
@@ -99,8 +102,6 @@ class CatchAdminServiceProvider extends ServiceProvider
 
     /**
      * register events
-     *
-     * @return void
      */
     protected function registerEvents(): void
     {
@@ -109,20 +110,19 @@ class CatchAdminServiceProvider extends ServiceProvider
 
     /**
      * register exception handler
-     *
-     * @return void
      */
     protected function registerExceptionHandler(): void
     {
         if (isRequestFromDashboard()) {
-            $this->app->singleton(ExceptionHandler::class, Handler::class);
+            $this->app->singleton(ExceptionHandler::class, function () {
+                return new Handler((fn () => Container::getInstance()));
+            });
         }
     }
 
+
     /**
      * publish config
-     *
-     * @return void
      */
     protected function publishConfig(): void
     {
@@ -135,11 +135,8 @@ class CatchAdminServiceProvider extends ServiceProvider
         }
     }
 
-
     /**
      * publish module migration
-     *
-     * @return void
      */
     protected function publishModuleMigration(): void
     {
@@ -152,12 +149,6 @@ class CatchAdminServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     *
-     * @return void
-     * @throws NotFoundExceptionInterface
-     * @throws ContainerExceptionInterface
-     */
     protected function bootDefaultModuleProviders(): void
     {
         foreach ($this->app['config']->get('catch.module.default', []) as $module) {
@@ -171,14 +162,19 @@ class CatchAdminServiceProvider extends ServiceProvider
     /**
      * boot module
      * @throws BindingResolutionException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
-    protected function bootModuleProviders()
+    protected function bootModuleProviders(): void
     {
-        foreach ($this->app->make(ModuleRepositoryInterface::class)->getEnabled() as $module) {
-            if (class_exists($module['provider'])) {
-                $this->app->register($module['provider']);
+        // 如果配置了模块自动加载，则不需要从本地配置中加载
+        if (config('catch.module.autoload')) {
+            foreach (CatchAdmin::getAllProviders() as $provider) {
+                $this->app->register($provider);
+            }
+        } else {
+            foreach ($this->app->make(ModuleRepositoryInterface::class)->getEnabled() as $module) {
+                if (class_exists($module['provider'])) {
+                    $this->app->register($module['provider']);
+                }
             }
         }
 
@@ -187,16 +183,13 @@ class CatchAdminServiceProvider extends ServiceProvider
 
     /**
      * register module routes
-     *
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
-    protected function registerModuleRoutes()
+    protected function registerModuleRoutes(): void
     {
         if (! $this->app->routesAreCached()) {
-            $route = $this->app['config']->get('catch.route');
+            $route = $this->app['config']->get('catch.route', []);
 
-            if (! empty($route)) {
+            if (! empty($route) && isset($route['prefix'])) {
                 Route::prefix($route['prefix'])
                     ->middleware($route['middlewares'])
                     ->group($this->app['config']->get('catch.module.routes'));
@@ -206,10 +199,6 @@ class CatchAdminServiceProvider extends ServiceProvider
 
     /**
      * listen db log
-     *
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @return void
      */
     protected function listenDBLog(): void
     {
@@ -224,8 +213,6 @@ class CatchAdminServiceProvider extends ServiceProvider
 
     /**
      * file exist
-     *
-     * @return bool
      */
     protected function routesAreCached(): bool
     {

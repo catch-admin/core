@@ -32,46 +32,36 @@ class Blueprint
 
     /**
      * created unix timestamp
-     *
-     * @return void
      */
     public function createdAt(): void
     {
         LaravelBlueprint::macro(__FUNCTION__, function () {
-            $this->unsignedInteger('created_at')->default(0)->comment('created time');
+            $this->unsignedInteger('created_at')->default(0)->comment('创建时间');
         });
     }
 
     /**
      * update unix timestamp
-     *
-     * @return void
      */
     public function updatedAt(): void
     {
         LaravelBlueprint::macro(__FUNCTION__, function () {
-            $this->unsignedInteger('updated_at')->default(0)->comment('updated time');
+            $this->unsignedInteger('updated_at')->default(0)->comment('更新时间');
         });
     }
 
     /**
      * soft delete
-     *
-     * @return void
      */
     public function deletedAt(): void
     {
         LaravelBlueprint::macro(__FUNCTION__, function () {
-            $this->unsignedInteger('deleted_at')->default(0)->comment('delete time');
+            $this->unsignedInteger('deleted_at')->default(0)->comment('软删除');
         });
     }
 
-
     /**
      * unix timestamp
-     *
-     * @param bool $softDeleted
-     * @return void
      */
     public function unixTimestamp(bool $softDeleted = true): void
     {
@@ -87,52 +77,41 @@ class Blueprint
 
     /**
      * creator id
-     *
-     * @return void
      */
     public function creatorId(): void
     {
         LaravelBlueprint::macro(__FUNCTION__, function () {
-            $this->unsignedInteger('creator_id')->default(0)->comment('creator id');
+            $this->unsignedInteger('creator_id')->default(0)->comment('创建人ID');
         });
     }
 
-
     /**
      * parent ID
-     *
-     * @return void
      */
     public function parentId(): void
     {
         LaravelBlueprint::macro(__FUNCTION__, function () {
-            $this->unsignedInteger('parent_id')->default(0)->comment('parent id');
+            $this->unsignedInteger('parent_id')->default(0)->comment('父级ID');
         });
     }
 
-
     /**
      * status
-     *
-     * @return void
      */
     public function status(): void
     {
         LaravelBlueprint::macro(__FUNCTION__, function ($default = 1) {
-            $this->tinyInteger('status')->default($default)->comment('1:normal 2: forbidden');
+            $this->tinyInteger('status')->default($default)->comment('状态:1=正常,2=禁用');
         });
     }
 
     /**
      * sort
-     *
-     * @param int $default
-     * @return void
      */
     public function sort(int $default = 1): void
     {
         LaravelBlueprint::macro(__FUNCTION__, function () use ($default) {
-            $this->integer('sort')->comment('sort')->default($default);
+            $this->integer('sort')->comment('排序')->default($default);
         });
     }
 }

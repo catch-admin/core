@@ -13,7 +13,9 @@ class MacrosRegister
     public function __construct(
         protected Blueprint $blueprint,
         protected Collection $collection,
-        protected Builder $builder
+        protected Builder $builder,
+        protected Router $router,
+        protected Cache $cache
     ){}
 
     /**
@@ -24,5 +26,7 @@ class MacrosRegister
         $this->blueprint->boot();
         $this->collection->boot();
         $this->builder->boot();
+        $this->router->boot();
+        $this->cache->boot();
     }
 }

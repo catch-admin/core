@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2021 https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin-laravel/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -53,7 +53,7 @@ class Model extends CatchCommand
      */
     public function handle()
     {
-        if (! Schema::hasTable($this->getTableName())) {
+        if (!Schema::hasTable($this->getTableName())) {
             $this->error('Schema ['.$this->getTableName().'] not found');
             exit;
         }
@@ -65,7 +65,7 @@ class Model extends CatchCommand
         if (File::exists($file)) {
             $answer = $this->ask($file.' already exists, Did you want replace it?', 'Y');
 
-            if (! Str::of($answer)->lower()->exactly('y')) {
+            if (!Str::of($answer)->lower()->exactly('y')) {
                 exit;
             }
         }
@@ -79,21 +79,11 @@ class Model extends CatchCommand
         }
     }
 
-    /**
-     *
-     *
-     * @return string
-     */
     protected function getModelFile(): string
     {
         return $this->getModelName().'.php';
     }
 
-    /**
-     *
-     *
-     * @return string
-     */
     protected function getModelName(): string
     {
         return Str::of($this->argument('model'))->ucfirst()->toString();
@@ -101,19 +91,14 @@ class Model extends CatchCommand
 
     /**
      * get stub content
-     *
-     * @return string
      */
     protected function getStubContent(): string
     {
         return File::get(dirname(__DIR__).DIRECTORY_SEPARATOR.'stubs'.DIRECTORY_SEPARATOR.'model.stub');
     }
 
-
     /**
      * get model content
-     *
-     * @return string
      */
     protected function getModelContent(): string
     {
@@ -121,20 +106,18 @@ class Model extends CatchCommand
 
             ->replace(
                 [
-                    '{namespace}', '{model}', '{table}', '{fillable}'
+                    '{namespace}', '{model}', '{table}', '{fillable}',
                 ],
                 [
                     $this->getModelNamespace(), $this->getModelName(),
 
-                    $this->getTableName(), $this->getFillable()
+                    $this->getTableName(), $this->getFillable(),
                 ]
             )->toString();
     }
 
     /**
      * get namespace
-     *
-     * @return string
      */
     protected function getModelNamespace(): string
     {
@@ -143,8 +126,6 @@ class Model extends CatchCommand
 
     /**
      * get table name
-     *
-     * @return string
      */
     protected function getTableName(): string
     {
@@ -155,11 +136,6 @@ class Model extends CatchCommand
             Str::of($this->argument('model'))->snake()->lcfirst()->toString();
     }
 
-    /**
-     *
-     *
-     * @return string
-     */
     protected function getFillable(): string
     {
         $fillable = Str::of('');

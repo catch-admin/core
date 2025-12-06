@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2021 https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin-laravel/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -23,12 +23,9 @@ trait WithEvents
 {
     protected ?Closure $beforeGetList = null;
 
-
     protected ?Closure $afterFirstBy = null;
 
     /**
-     *
-     * @param Closure $closure
      * @return $this
      */
     public function setBeforeGetList(Closure $closure): static
@@ -39,8 +36,6 @@ trait WithEvents
     }
 
     /**
-     *
-     * @param Closure $closure
      * @return $this
      */
     public function setAfterFirstBy(Closure $closure): static

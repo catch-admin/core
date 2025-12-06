@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2021 https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin-laravel/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -25,20 +25,21 @@ enum Code: int implements Enum
     case USER_FORBIDDEN = 10008; // 账户被禁
     case WECHAT_RESPONSE_ERROR = 40000;
 
+    case COMPONENT_NOT_FOUND = 10010; // 组件找不到
+
+    case WEBHOOK_FAILED = 10011; // webhook 推送失败
+
+    case TOKEN_EXPIRED = 10012; // token 过期
     /**
      * message
-     *
      */
     public function message(): string
     {
         return $this->name();
     }
 
-
     /**
      * get value
-     *
-     * @return int
      */
     public function value(): int
     {
@@ -53,13 +54,14 @@ enum Code: int implements Enum
             Code::LOGIN_BLACKLIST => 10007,
             Code::USER_FORBIDDEN => 10008,
             Code::WECHAT_RESPONSE_ERROR => 40000,
+            Code::COMPONENT_NOT_FOUND => 10010,
+            Code::WEBHOOK_FAILED => 10011,
+            Code::TOKEN_EXPIRED => 10012
         };
     }
 
     /**
      * name
-     *
-     * @return string
      */
     public function name(): string
     {
@@ -73,7 +75,10 @@ enum Code: int implements Enum
             self::LOGIN_EXPIRED => '登陆过期',
             self::LOGIN_BLACKLIST => '已被加入黑名单',
             self::USER_FORBIDDEN => '账户被禁用',
-            self::WECHAT_RESPONSE_ERROR => '微信响应错误'
+            self::WECHAT_RESPONSE_ERROR => '微信响应错误',
+            self::COMPONENT_NOT_FOUND => '组件未找到',
+            self::WEBHOOK_FAILED => 'webhook推送失败',
+            self::TOKEN_EXPIRED => 'token过期'
         };
     }
 }

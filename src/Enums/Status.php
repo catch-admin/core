@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2021 https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/yanwenwu/catch-admin/blob/master/LICENSE.txt )
 // +----------------------------------------------------------------------
@@ -22,7 +22,6 @@ enum Status: int implements Enum
 
     /**
      * @desc name
-     *
      */
     public function name(): string
     {
@@ -35,8 +34,6 @@ enum Status: int implements Enum
 
     /**
      * get value
-     *
-     * @return int
      */
     public function value(): int
     {
@@ -45,5 +42,16 @@ enum Status: int implements Enum
 
             Status::Disable => 2,
         };
+    }
+
+    /**
+     * 断言
+     *
+     * @param $value
+     * @return bool
+     */
+    public function assert($value): bool
+    {
+        return $this->value() == $value;
     }
 }

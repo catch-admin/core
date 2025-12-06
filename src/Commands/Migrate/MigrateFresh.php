@@ -35,18 +35,16 @@ class MigrateFresh extends CatchCommand
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
     public function handle(): void
     {
         $module = $this->argument('module');
 
-        if (! File::isDirectory(CatchAdmin::getModuleMigrationPath($module))) {
+        if (!File::isDirectory(CatchAdmin::getModuleMigrationPath($module))) {
             Artisan::call('migration:fresh', [
                 '--path' => CatchAdmin::getModuleRelativePath(CatchAdmin::getModuleMigrationPath($module)),
 
-                '--force' => $this->option('force')
+                '--force' => $this->option('force'),
             ]);
         } else {
             $this->error('No migration files in module');

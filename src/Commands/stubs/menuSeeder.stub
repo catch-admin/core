@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Modules\Common\Support\ImportPermissions;
 
 return new class extends Seeder
 {
@@ -14,7 +14,7 @@ return new class extends Seeder
     {
         $menus = $this->menus();
 
-        importTreeData($menus, 'permissions');
+        ImportPermissions::import($menus);
     }
 
     public function menus(): array

@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2021 https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin-laravel/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -18,8 +18,6 @@ use Catch\CatchAdmin;
 use Catch\Commands\CatchCommand;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-
-;
 
 class Controller extends CatchCommand
 {
@@ -37,7 +35,6 @@ class Controller extends CatchCommand
      */
     protected $description = 'create catch controller';
 
-
     public function handle()
     {
         $controllerPath = CatchAdmin::getModuleControllerPath($this->argument('module'));
@@ -47,13 +44,13 @@ class Controller extends CatchCommand
         if (File::exists($file)) {
             $answer = $this->ask($file.' already exists, Did you want replace it?', 'Y');
 
-            if (! Str::of($answer)->lower()->exactly('y')) {
+            if (!Str::of($answer)->lower()->exactly('y')) {
                 exit;
             }
         }
 
         File::put($file, Str::of($this->getStubContent())->replace([
-            '{namespace}', '{controller}'
+            '{namespace}', '{controller}',
         ], [trim(CatchAdmin::getModuleControllerNamespace($this->argument('module')), '\\'), $this->getControllerName()])->toString());
 
         if (File::exists($file)) {
@@ -63,35 +60,23 @@ class Controller extends CatchCommand
         }
     }
 
-    /**
-     *
-     *
-     * @return string
-     */
     protected function getControllerFile(): string
     {
         return $this->getControllerName().'.php';
     }
 
-    /**
-     *
-     *
-     * @return string
-     */
     protected function getControllerName(): string
     {
-        return  Str::of($this->argument('name'))
-                    ->whenContains('Controller', function ($str) {
-                        return $str;
-                    }, function ($str) {
-                        return $str->append('Controller');
-                    })->ucfirst()->toString();
+        return Str::of($this->argument('name'))
+            ->whenContains('Controller', function ($str) {
+                return $str;
+            }, function ($str) {
+                return $str->append('Controller');
+            })->ucfirst()->toString();
     }
 
     /**
      * get stub content
-     *
-     * @return string
      */
     protected function getStubContent(): string
     {

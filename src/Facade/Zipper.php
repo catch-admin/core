@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Catch\Facade;
 
-use Illuminate\Support\Facades\Facade;
 use Catch\Support\Zip\Zipper as Zip;
+use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static Zip make(string $pathToFile)

@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2021 https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin-laravel/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -34,12 +34,6 @@ class MigrateMake extends CatchCommand
      */
     protected $description = 'create module migration';
 
-
-    /**
-     *
-     *
-     * @return void
-     */
     public function handle(): void
     {
         $migrationPath = CatchAdmin::getModuleMigrationPath($this->argument('module'));
@@ -51,7 +45,6 @@ class MigrateMake extends CatchCommand
             $this->getTable()
         )->toString());
 
-
         if (File::exists($file)) {
             $this->info($file.' has been created');
         } else {
@@ -59,30 +52,18 @@ class MigrateMake extends CatchCommand
         }
     }
 
-    /**
-     *
-     *
-     * @return string
-     */
     protected function getMigrationFile(): string
     {
-        return date('Y_m_d_His').'_create_'.$this->getTable().'.php';
+        return date('Y_m_d_His').'_'.$this->getTable().'.php';
     }
 
-    /**
-     *
-     *
-     * @return string
-     */
     protected function getTable(): string
     {
-        return  Str::of($this->argument('table'))->ucfirst()->snake()->lower()->toString();
+        return Str::of($this->argument('table'))->ucfirst()->snake()->lower()->toString();
     }
 
     /**
      * get stub content
-     *
-     * @return string
      */
     protected function getStubContent(): string
     {

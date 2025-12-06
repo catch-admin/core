@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2021 https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin-laravel/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -24,12 +24,12 @@ trait ScopeTrait
         $model = app(static::class);
 
         if (in_array($model->getCreatorIdColumn(), $model->getFillable())) {
-                $userModel = app(getAuthUserModel());
+            $userModel = app(getAuthUserModel());
 
             $query->addSelect([
-                    'creator' => $userModel->whereColumn($userModel->getKeyName(), $model->getTable() . '.' . $model->getCreatorIdColumn())
-                        ->select('username')->limit(1)
-                ]);
+                'creator' => $userModel->whereColumn($userModel->getKeyName(), $model->getTable().'.'.$model->getCreatorIdColumn())
+                    ->select('username')->limit(1),
+            ]);
         }
     }
 }

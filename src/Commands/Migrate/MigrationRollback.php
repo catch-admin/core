@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017~2021 https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017~2021 https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin-laravel/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -45,18 +45,16 @@ class MigrationRollback extends CatchCommand
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
     public function handle(): void
     {
         $module = $this->argument('module');
 
-        if (! File::isDirectory(CatchAdmin::getModuleMigrationPath($module))) {
+        if (!File::isDirectory(CatchAdmin::getModuleMigrationPath($module))) {
             Artisan::call('migration:rollback', [
                 '--path' => CatchAdmin::getModuleRelativePath(CatchAdmin::getModuleMigrationPath($module)),
 
-                '--force' => $this->option('force')
+                '--force' => $this->option('force'),
             ]);
         } else {
             $this->error('No migration files in module');

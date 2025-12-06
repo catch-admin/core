@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------
 // | CatchAdmin [Just Like ～ ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2017 ~ now https://catchadmin.com All rights reserved.
+// | Copyright (c) 2017 ~ now https://catchadmin.vip All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( https://github.com/JaguarJack/catchadmin/blob/master/LICENSE.md )
 // +----------------------------------------------------------------------
@@ -14,11 +14,11 @@ declare(strict_types=1);
 
 namespace Catch\Commands;
 
+use Catch\Facade\Module;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Catch\Facade\Module;
 
 use function Termwind\ask;
 use function Termwind\render;
@@ -29,7 +29,6 @@ abstract class CatchCommand extends Command
      * @var string
      */
     protected $name;
-
 
     public function __construct()
     {
@@ -43,11 +42,6 @@ abstract class CatchCommand extends Command
         }
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return void
-     */
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         if ($input->hasArgument('module')
@@ -58,13 +52,8 @@ abstract class CatchCommand extends Command
         }
     }
 
-
     /**
-     *
-     * @param string $question
-     * @param null $default
-     * @param bool $isChoice
-     * @return string|int|null
+     * @param  null  $default
      */
     public function askFor(string $question, $default = null, bool $isChoice = false): string|null|int
     {
@@ -95,13 +84,10 @@ HTML
         return $answer;
     }
 
-
     /**
      * info
      *
-     * @param $string
-     * @param null $verbosity
-     * @return void
+     * @param  null  $verbosity
      */
     public function info($string, $verbosity = null): void
     {
@@ -120,9 +106,7 @@ HTML
     /**
      * error
      *
-     * @param $string
-     * @param null $verbosity
-     * @return void
+     * @param  null  $verbosity
      */
     public function error($string, $verbosity = null): void
     {
