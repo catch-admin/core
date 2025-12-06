@@ -269,12 +269,8 @@ class InstallCommand extends CatchCommand
                 Process::run(Application::formatCommandString('migrate'))->throw();
             }
 
-            foreach (['user', 'develop'] as $name) {
+            foreach (['user', 'develop', 'permissions', 'system'] as $name) {
                 $this->migrateModule($name);
-            }
-
-            foreach (['permissions', 'system'] as $name) {
-                CatchAdmin::getModuleInstaller($name)->install();
             }
 
         } catch (\Exception|\Throwable $e) {
@@ -426,13 +422,16 @@ class InstallCommand extends CatchCommand
      */
     public function installed(): void
     {
-       $this->installFrontProject();
+        $this->installFrontProject();
 
         $this->addPsr4Autoload();
 
         $this->info('🎉 CatchAdmin 已安装, 欢迎!');
 
         $this->isFinished = true;
+
+        // 安装插件管理
+        command('catch:plugin-install');
 
         $this->output->info(sprintf('
  /------------------------ welcome ----------------------------\
@@ -459,18 +458,18 @@ class InstallCommand extends CatchCommand
 
         if (in_array(strtolower($answer), ['yes', 'y'])) {
             if (PHP_OS_FAMILY == 'Darwin') {
-                exec('open https://doc.catchadmin.vip/start/overview');
+                exec('open https://doc.catchadmin.com/docs/3.0/intro');
             }
             if (PHP_OS_FAMILY == 'Windows') {
-                exec('start https://doc.catchadmin.vip/start/overview');
+                exec('start https://doc.catchadmin.com/docs/3.0/intro');
             }
             if (PHP_OS_FAMILY == 'Linux') {
-                exec('xdg-open https://doc.catchadmin.vip/start/overview');
+                exec('xdg-open https://doc.catchadmin.com/docs/3.0/intro');
             }
         }
 
-        $this->info('官 网: https://catchadmin.vip');
-        $this->info('文 档: https://doc.catchadmin.vip/start/overview');
+        $this->info('官 网: https://catchadmin.com');
+        $this->info('文 档: https://doc.catchadmin.com/docs/3.0/intro');
         try {
             $this->parseDevServer();
             $this->info('启动 Go: composer run dev');
@@ -497,18 +496,18 @@ class InstallCommand extends CatchCommand
 
         foreach ($env as &$value) {
             foreach ([
-                'APP_NAME' => $appName,
-                'APP_ENV' => $this->isProd ? 'production' : 'local',
-                'APP_DEBUG' => $this->isProd ? 'false' : 'true',
-                'APP_URL' => $appUrl,
-                'DB_CONNECTION' => $driver,
-                'DB_HOST' => $dbHost,
-                'DB_PORT' => $dbPort,
-                'DB_DATABASE' => $databaseName,
-                'DB_USERNAME' => $dbUsername,
-                'DB_PASSWORD' => $dbPassword,
-                'DB_PREFIX' => $prefix,
-            ] as $key => $newValue) {
+                         'APP_NAME' => $appName,
+                         'APP_ENV' => $this->isProd ? 'production' : 'local',
+                         'APP_DEBUG' => $this->isProd ? 'false' : 'true',
+                         'APP_URL' => $appUrl,
+                         'DB_CONNECTION' => $driver,
+                         'DB_HOST' => $dbHost,
+                         'DB_PORT' => $dbPort,
+                         'DB_DATABASE' => $databaseName,
+                         'DB_USERNAME' => $dbUsername,
+                         'DB_PASSWORD' => $dbPassword,
+                         'DB_PREFIX' => $prefix,
+                     ] as $key => $newValue) {
                 if (Str::contains($value, $key) && ! Str::contains($value, 'VITE_')) {
                     $value = $this->resetEnvValue($value, $newValue);
                 }

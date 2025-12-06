@@ -86,7 +86,7 @@ return [
          *
          * 如果设置成 true，模块会自动全部加载
          */
-        'autoload' => env('CATCH_MODULE_AUTOLOAD', false),
+        'autoload' => env('CATCH_MODULE_AUTOLOAD', true),
     ],
 
     /*

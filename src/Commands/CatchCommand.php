@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Catch\Commands;
 
+use Catch\CatchAdmin;
 use Catch\Facade\Module;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
@@ -44,9 +45,7 @@ abstract class CatchCommand extends Command
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
-        if ($input->hasArgument('module')
-            && ! Module::getEnabled()->pluck('name')->merge(Collection::make(config('catch.module.default')))->contains(lcfirst($input->getArgument('module')))
-        ) {
+        if ($input->hasArgument('module') && ! CatchAdmin::isModulePathExist(lcfirst($input->getArgument('module')))) {
             $this->error(sprintf('Module [%s] Not Found', $input->getArgument('module')));
             exit;
         }
