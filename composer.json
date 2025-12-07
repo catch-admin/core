@@ -8,8 +8,7 @@
         "ext-zip": "*",
         "laravel/sanctum": "^v4.0.8",
         "maatwebsite/excel": "^3.1.64",
-        "mews/captcha": "^3.4.5",
-        "catchadmin/plugin": "^1.0"
+        "mews/captcha": "^3.4.5"
     },
     "license": "MIT",
     "autoload": {
