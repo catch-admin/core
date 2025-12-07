@@ -49,7 +49,7 @@ class InstallCommand extends CatchCommand
 
     protected string $appUrl = 'http://127.0.0.1:8000';
 
-    protected string $appName;
+    protected string $appName = '';
 
     /**
      * @var array|string[]
@@ -81,10 +81,11 @@ class InstallCommand extends CatchCommand
             // 如果没有 .env 文件
             if (! File::exists(app()->environmentFile())) {
                 $this->askForCreatingDatabase();
+                $this->publishConfig();
+                $this->installed();
             }
 
-            $this->publishConfig();
-            $this->installed();
+            $this->showInfo();
         } catch (\Throwable $e) {
             $this->rollback();
 
@@ -439,7 +440,15 @@ class InstallCommand extends CatchCommand
 
         // 安装插件管理
         command('catch:plugin-install');
+    }
 
+    /**
+     * show info
+     *
+     * @return void
+     */
+    protected function showInfo()
+    {
         $this->output->info(sprintf('
  /------------------------ welcome ----------------------------\
 |               __       __       ___       __          _      |
@@ -465,13 +474,13 @@ class InstallCommand extends CatchCommand
 
         if (in_array(strtolower($answer), ['yes', 'y'])) {
             if (PHP_OS_FAMILY == 'Darwin') {
-                exec('open https://doc.catchadmin.com/docs/3.0/intro');
+                exec('open https://doc.catchadmin.com/docs/5.0/intro');
             }
             if (PHP_OS_FAMILY == 'Windows') {
-                exec('start https://doc.catchadmin.com/docs/3.0/intro');
+                exec('start https://doc.catchadmin.com/docs/5.0/intro');
             }
             if (PHP_OS_FAMILY == 'Linux') {
-                exec('xdg-open https://doc.catchadmin.com/docs/3.0/intro');
+                exec('xdg-open https://doc.catchadmin.com/docs/5.0/intro');
             }
         }
 
