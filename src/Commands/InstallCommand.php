@@ -80,11 +80,16 @@ class InstallCommand extends CatchCommand
         try {
             // 如果没有 .env 文件
             if (! File::exists(app()->environmentFile())) {
+                // 创建数据库
                 $this->askForCreatingDatabase();
+                // 发布配置 && 初始化数据库结构和数据
                 $this->publishConfig();
+                // 创建软连接
+                $this->createStorageLink();
+                // 安装前端
                 $this->installed();
             }
-
+            // 展示信息
             $this->showInfo();
         } catch (\Throwable $e) {
             $this->rollback();
@@ -171,6 +176,14 @@ class InstallCommand extends CatchCommand
             $this->error('exec 函数未开启，请开启 exec 函数');
             exit;
         }
+    }
+
+    /**
+     * @return void
+     */
+    private function createStorageLink(): void
+    {
+        command('storage:link');
     }
 
     /**
