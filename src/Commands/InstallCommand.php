@@ -667,12 +667,12 @@ STR;
 
         $this->info('开始下载前端项目');
 
-        shell_exec("git clone {$this->webRepo} web");
+        shell_exec("git clone -b v5 {$this->webRepo} web");
 
         if (is_dir($webPath)) {
             return true;
         } else {
-            $this->error('下载前端项目失败, 请到该仓库下载 https://gitee.com/catchadmin/catch-admin-vue');
+            $this->error('下载前端项目失败, 请到该仓库下载 https://gitee.com/catchadmin/catch-admin-vue v5 分支');
             return false;
         }
     }
