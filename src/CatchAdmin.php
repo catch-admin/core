@@ -317,9 +317,12 @@ class CatchAdmin
 
         $actions = [];
 
+        $currentClassName = $reflectionClass->getName();
         foreach ($reflectionClass->getMethods() as $method) {
             if ($method->isPublic() && ! $method->isConstructor()) {
-                $actions[] = $method->getName();
+                if ($method->getDeclaringClass()->getName() === $currentClassName) {
+                    $actions[] = $method->getName();
+                }
             }
         }
 
