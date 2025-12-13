@@ -1,68 +1,63 @@
 <?php
+
 namespace Catch\Support\Excel;
 
+use Catch\Events\Excel\Export as ExportEvent;
 use Catch\Exceptions\FailedException;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
-use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Throwable;
 
 /**
  * excel export abstract class
  */
-abstract class Export implements
-    FromArray,
-    ShouldAutoSize,
-    WithHeadings,
-    WithColumnWidths
+abstract class Export implements FromArray, ShouldAutoSize, WithColumnWidths, WithHeadings
 {
     /**
+     *  when data length lt 20000
+     *  it will change csv
+     */
+    protected int $toCsvLimit = 20000;
+
+    /**
      * data
-     *
-     * @var array
      */
     protected array $data;
 
     /**
      * 查询参数
-     *
-     * @var array
      */
-    protected array $search;
-
+    protected array $params = [];
 
     /**
      * excel header
-     *
-     * @var array
      */
     protected array $header = [];
 
     /**
      * filename
-     *
-     * @var string|null
      */
     protected ?string $filename = null;
 
-
-    /**
-     * @var bool
-     */
     protected bool $unlimitedMemory = false;
 
     /**
-     * export
+     * 保存目录
      *
-     * @return string
+     * @var string
      */
-    public function export(): string
+    protected string $path = '';
+
+    /**
+     * export
+     */
+    public function export(?string $disk = null): string
     {
         try {
             // 内存限制
@@ -77,25 +72,23 @@ abstract class Export implements
             $file = sprintf('%s/%s', $this->getExportPath(), $this->getFilename($writeType));
 
             // 保存
-            Excel::store($this, $file, null, $writeType);
+            Excel::store($this, $file, $disk, $writeType);
 
             // 导出事件
-            Event::dispatch(\Catch\Events\Excel\Export::class);
+            Event::dispatch(ExportEvent::class);
+
             return $file;
-        } catch (\Exception|\Throwable $e) {
-            throw new FailedException('导出失败: ' . $e->getMessage() . $e->getLine());
+        } catch (Throwable $e) {
+            throw new FailedException('导出失败: '.$e->getMessage());
         }
     }
 
     /**
      * download
-     *
-     * @param string|null $filename
-     * @return BinaryFileResponse
      */
-    public function download(string $filename = null): BinaryFileResponse
+    public function download(?string $filename = null): BinaryFileResponse
     {
-        $filename = $filename ? : $this->getFilename();
+        $filename = $filename ?: $this->getFilename();
         $writeType = $this->getWriteType();
 
         return Excel::download(
@@ -104,59 +97,53 @@ abstract class Export implements
             $writeType,
             [
                 'filename' => $filename,
-                'write_type' => $writeType
+                'write_type' => $writeType,
             ]
         );
     }
 
     /**
-     * @param array $search
      * @return $this
      */
-    public function setSearch(array $search): static
+    public function setParams(array $params): static
     {
-        $this->search = $search;
+        $this->params = $params;
 
         return $this;
     }
 
     /**
      * get search
-     *
-     * @return array
      */
-    public function getSearch(): array
+    public function getParams(): array
     {
-        return $this->search;
+        return $this->params;
     }
 
     /**
      * get write type
-     *
-     * @return string
      */
     protected function getWriteType(): string
     {
-        $toCsvLimit = config('catch.excel.export.csv_limit');
-
-        if ($this instanceof WithCustomCsvSettings && count($this->array()) >= $toCsvLimit) {
+        if ($this instanceof WithCustomCsvSettings && count($this->array()) >= $this->toCsvLimit) {
             return \Maatwebsite\Excel\Excel::CSV;
         }
 
         return \Maatwebsite\Excel\Excel::XLSX;
     }
 
-
     /**
      * get export path
-     *
-     * @return string
      */
     public function getExportPath(): string
     {
-        $path = config('catch.excel.export.path') . date('Ymd');
+        if ($this->path) {
+            return $this->path;
+        }
 
-        if (!is_dir($path) && !mkdir($path, 0777, true) && !is_dir($path)) {
+        $path = sprintf(config('catch.excel.export_path', 'excel/export') .'/%s', date('Ymd'));
+
+        if (! is_dir($path) && ! mkdir($path, 0777, true) && ! is_dir($path)) {
             throw new FailedException(sprintf('Directory "%s" was not created', $path));
         }
 
@@ -164,9 +151,21 @@ abstract class Export implements
     }
 
     /**
+     * 设置目录
+     *
+     * @param  string  $path
+     * @return $this
+     */
+    public function setPath(string $path): static
+    {
+        $this->path = $path;
+
+        return $this;
+    }
+
+    /**
      * set filename
      *
-     * @param string $filename
      * @return $this
      */
     public function setFilename(string $filename): static
@@ -176,17 +175,13 @@ abstract class Export implements
         return $this;
     }
 
-
     /**
      * get filename
-     *
-     * @param string|null $type
-     * @return string
      */
-    public function getFilename(string $type = null): string
+    public function getFilename(?string $type = null): string
     {
         if (! $this->filename) {
-            return Str::random() . '.'. strtolower($type ? : $this->getWriteType());
+            return Str::random().'.'.strtolower($type ?: $this->getWriteType());
         }
 
         return $this->filename;
@@ -194,19 +189,15 @@ abstract class Export implements
 
     /**
      * get excel header
-     *
-     * @return array
      */
     public function getHeader(): array
     {
         return $this->header;
     }
 
-
     /**
      * set excel header
      *
-     * @param array $header
      * @return $this
      */
     public function setHeader(array $header): static
@@ -216,9 +207,6 @@ abstract class Export implements
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function headings(): array
     {
         $headings = [];
@@ -235,7 +223,6 @@ abstract class Export implements
 
         return $headings;
     }
-
 
     /**
      * column width
@@ -258,14 +245,19 @@ abstract class Export implements
         return $columns;
     }
 
-    /**
-     * @return array
-     */
     public function getCsvSettings(): array
     {
         return [
             'delimiter' => ';',
             'use_bom' => false,
         ];
+    }
+
+    /**
+     * async task
+     */
+    public function run(array $params): mixed
+    {
+        return $this->setParams($params)->export();
     }
 }
