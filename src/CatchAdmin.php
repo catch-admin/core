@@ -127,6 +127,10 @@ class CatchAdmin
      */
     public static function getModuleNamespace($moduleName): string
     {
+        if (! self::isModulePathExist($moduleName)) {
+            return ltrim($moduleName, '\\') . '\\';
+        }
+
         return self::getModuleRootNamespace().ucfirst($moduleName).'\\';
     }
 
