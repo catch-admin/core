@@ -592,10 +592,6 @@ class InstallCommand extends CatchCommand
 
             File::delete($this->webEnv());
 
-            foreach (['permissions', 'system'] as $name) {
-                CatchAdmin::getModuleInstaller($name)->uninstall();
-            }
-
             $databaseConfig = config('database.connections.'.$this->defaultConnection);
 
             $databaseName = $databaseConfig['database'];
