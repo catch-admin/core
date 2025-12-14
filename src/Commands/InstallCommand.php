@@ -498,7 +498,7 @@ class InstallCommand extends CatchCommand
         }
 
         $this->info('官 网: https://catchadmin.com');
-        $this->info('文 档: https://doc.catchadmin.com/docs/3.0/intro');
+        $this->info('文 档: https://doc.catchadmin.com/docs/5.0/intro');
         try {
             $this->parseDevServer();
             $this->info('启动 Go: composer run dev');
