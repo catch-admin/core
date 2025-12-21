@@ -23,7 +23,7 @@ use Illuminate\Support\Str;
 
 class CatchAdmin
 {
-    public const VERSION = '1.0.0';
+    public const VERSION = '1.0.6';
 
     /**
      * version
@@ -353,5 +353,24 @@ class CatchAdmin
         }
 
         return $providers;
+    }
+
+    /**
+     * @param string $dirName
+     * @return null|string
+     */
+    public static function getModuleProviderBy(string $dirName): ?string
+    {
+        if (! is_dir(self::moduleRootPath() . lcfirst($dirName))) {
+            return null;
+        }
+
+        $provider = self::getModuleServiceProvider(self::moduleRootPath() . $dirName);
+
+        if (class_exists($provider)) {
+            return $provider;
+        }
+
+        return null;
     }
 }

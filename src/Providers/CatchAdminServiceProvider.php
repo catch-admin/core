@@ -172,8 +172,8 @@ class CatchAdminServiceProvider extends ServiceProvider
             }
         } else {
             foreach ($this->app->make(ModuleRepositoryInterface::class)->getEnabled() as $module) {
-                if (class_exists($module['provider'])) {
-                    $this->app->register($module['provider']);
+                if ($provider = CatchAdmin::getModuleProviderBy($module['path'])) {
+                    $this->app->register($provider);
                 }
             }
         }
