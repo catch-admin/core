@@ -120,7 +120,7 @@ class Handler extends ExceptionHandler
             'line' => $e->getLine(),
             'trace' => $this->getTraceFileContent($e),
         ] : [
-            'message' => $message ?: 'Server Error',
+            'message' => $this->isHttpException($e) ? $message : 'Server Error',
         ];
     }
 
