@@ -95,6 +95,7 @@ class Handler extends ExceptionHandler
             $e instanceof MethodNotAllowedHttpException => new Exception('路由 HTTP 请求方法错误，当前请求方法: '.$request->getMethod().'，请检查对应路由 HTTP 请求方法是否正确'),
             $e instanceof QueryException => new Exception('数据库报错: '.$e->errorInfo[2]),
             $e instanceof ModelNotFoundException => new Exception('模型找不到: '.$e->getMessage()),
+            $e instanceof LostLoginException => $e,
             default => new FailedException($e->getMessage()),
         };
         $response = parent::render($request, $e);

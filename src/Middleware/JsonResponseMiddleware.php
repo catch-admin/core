@@ -12,7 +12,6 @@ class JsonResponseMiddleware
     public function handle(Request $request, \Closure $next)
     {
         $response = $next($request);
-
         // set expose header，download excel needs
         $response->headers->set('Access-Control-Expose-Headers', 'filename,write_type');
 
@@ -20,7 +19,6 @@ class JsonResponseMiddleware
         if ($response instanceof BinaryFileResponse) {
             return $response;
         }
-
         // other response
         if ($response instanceof Response) {
             return new JsonResponse($response->getContent());
