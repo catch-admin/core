@@ -34,16 +34,7 @@ class Admin
             }
 
             // 如果缓存中没有缓存用户，就从数据库中获取并缓存
-            $user = Cache::get($userCacheKey);
-            if (! $user && $personalToken instanceof PersonalAccessToken) {
-                $user = $personalToken->tokenable;
-                if (! $user instanceof User) {
-                    throw new AuthenticationException;
-                }
-                // 这里需要永久存储，等待 token id 主动删除
-                Cache::forever($userCacheKey, $user);
-            }
-
+            $user = $this->resolveUserFromToken($userCacheKey, $personalToken, $tokenId);
             // 更新最近使用
             $this->updatePersonalTokenLastUsed($tokenId);
             // 单例
@@ -169,7 +160,7 @@ class Admin
     }
 
     /**
-     * @throws AuthenticationException
+     * @throws AuthenticationException|\Psr\SimpleCache\InvalidArgumentException
      */
     public function clearAllCachedUsers(): void
     {
@@ -277,5 +268,38 @@ class Admin
         }
 
         return true;
+    }
+
+    /**
+     * 从 token 中解析用户
+     *
+     * @param $userCacheKey
+     * @param bool|PersonalAccessToken $personalToken token 验证结果
+     * @param string $tokenId token ID
+     * @return User
+     *
+     * @throws AuthenticationException
+     */
+    protected function resolveUserFromToken($userCacheKey,bool|PersonalAccessToken $personalToken, string $tokenId): User
+    {
+        $user = Cache::get($userCacheKey);
+
+        if ($user) {
+            return $user;
+        }
+
+        if ($personalToken instanceof PersonalAccessToken) {
+            $user = $personalToken->tokenable;
+        } else {
+            $user = Sanctum::$personalAccessTokenModel::find($tokenId)?->tokenable;
+        }
+
+        if (! $user instanceof User) {
+            throw new AuthenticationException;
+        }
+
+        Cache::forever($userCacheKey, $user);
+
+        return $user;
     }
 }
