@@ -32,17 +32,17 @@ class Zipper
     /**
      * Constant for extracting
      */
-    public const WHITELIST = 1;
+    public const int WHITELIST = 1;
 
     /**
      * Constant for extracting
      */
-    public const BLACKLIST = 2;
+    public const int BLACKLIST = 2;
 
     /**
      * Constant for matching only strictly equal file names
      */
-    public const EXACT_MATCH = 4;
+    public const int EXACT_MATCH = 4;
 
     /**
      * @var string Represents the current location in the archive

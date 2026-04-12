@@ -3,12 +3,12 @@
     "description": "catch admin core package",
     "type": "library",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "ext-pdo": "*",
         "ext-zip": "*",
-        "laravel/sanctum": "^v4.0.8",
-        "maatwebsite/excel": "^3.1.64",
-        "mews/captcha": "^3.4.5",
+        "laravel/sanctum": "^v4.3.0",
+        "maatwebsite/excel": "^3.1.68",
+        "jason/captcha": "^v1.2.0",
         "nette/php-generator": "^v4.1.8"
     },
     "license": "MIT",
@@ -33,5 +33,5 @@
             ]
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }
