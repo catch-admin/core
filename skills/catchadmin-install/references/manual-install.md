@@ -7,6 +7,7 @@ Run from the project root:
 ```shell
 pwd
 test -f composer.json
+git clone -b v5 https://gitee.com/catchadmin/catch-admin-vue.git web
 test -f web/package.json
 ```
 
