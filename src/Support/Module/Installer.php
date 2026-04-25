@@ -17,9 +17,7 @@ abstract class Installer
     /**
      * construct
      */
-    public function __construct(protected ModuleRepositoryInterface $moduleRepository)
-    {
-    }
+    public function __construct(protected ModuleRepositoryInterface $moduleRepository) {}
 
     /**
      * module info

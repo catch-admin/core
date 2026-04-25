@@ -10,7 +10,6 @@
 // | Author: JaguarJack [ njphper@gmail.com ]
 // +----------------------------------------------------------------------
 
-
 declare(strict_types=1);
 
 namespace Catch\Support\Module\Driver;
@@ -34,14 +33,11 @@ class FileDriver implements ModuleRepositoryInterface
      */
     public function __construct()
     {
-        $this->moduleJson = storage_path('app').DIRECTORY_SEPARATOR.'modules.json';
+        $this->moduleJson = storage_path('app') . DIRECTORY_SEPARATOR . 'modules.json';
     }
 
     /**
      * all
-     *
-     * @param array $search
-     * @return Collection
      */
     public function all(array $search = []): Collection
     {
@@ -68,9 +64,6 @@ class FileDriver implements ModuleRepositoryInterface
 
     /**
      * create module json
-     *
-     * @param array $module
-     * @return bool
      */
     public function create(array $module): bool
     {
@@ -91,9 +84,6 @@ class FileDriver implements ModuleRepositoryInterface
 
     /**
      * module info
-     *
-     * @param string $name
-     * @return Collection
      */
     public function show(string $name): Collection
     {
@@ -108,10 +98,6 @@ class FileDriver implements ModuleRepositoryInterface
 
     /**
      * update module json
-     *
-     * @param string $name
-     * @param array $module
-     * @return bool
      */
     public function update(string $name, array $module): bool
     {
@@ -124,6 +110,7 @@ class FileDriver implements ModuleRepositoryInterface
                 $m['enable'] = $module['enable'];
             }
             $this->removeDirs($m);
+
             return $m;
         })->values()->toJson(JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
@@ -132,9 +119,6 @@ class FileDriver implements ModuleRepositoryInterface
 
     /**
      * delete module json
-     *
-     * @param string $name
-     * @return bool
      */
     public function delete(string $name): bool
     {
@@ -144,15 +128,11 @@ class FileDriver implements ModuleRepositoryInterface
             }
         })->toJson(JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-
         return true;
     }
 
     /**
      * disable or enable
-     *
-     * @param $name
-     * @return bool|int
      */
     public function disOrEnable($name): bool|int
     {
@@ -160,14 +140,13 @@ class FileDriver implements ModuleRepositoryInterface
             if (Str::of($module['name'])->exactly($name)) {
                 $module['enable'] = ! $module['enable'];
             }
+
             return $module;
         })->toJson(JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
 
     /**
      * get enabled
-     *
-     * @return Collection
      */
     public function getEnabled(): Collection
     {
@@ -177,8 +156,6 @@ class FileDriver implements ModuleRepositoryInterface
 
     /**
      * enabled
-     * @param string $moduleName
-     * @return bool
      */
     public function enabled(string $moduleName): bool
     {
@@ -186,12 +163,6 @@ class FileDriver implements ModuleRepositoryInterface
         return $this->getEnabled()->pluck('name')->contains($moduleName);
     }
 
-    /**
-     *
-     * @param array $module
-     * @param Collection $modules
-     * @return void
-     */
     protected function hasSameModule(array $module, Collection $modules): void
     {
         if ($modules->count()) {
@@ -203,8 +174,6 @@ class FileDriver implements ModuleRepositoryInterface
 
     /**
      * remove dirs
-     *
-     * @param array $modules
      */
     protected function removeDirs(array &$modules): void
     {
