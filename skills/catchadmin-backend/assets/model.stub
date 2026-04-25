@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\{ModuleName}\Models;
+
+use Catch\Base\CatchModel as Model;
+
+class {Name} extends Model
+{
+    protected $table = '{table_name}';
+
+    protected $fillable = [
+        'id', '{field1}', '{field2}', 'status', 'sort',
+        'creator_id', 'created_at', 'updated_at', 'deleted_at',
+    ];
+
+    protected array $fields = [
+        'id', '{field1}', '{field2}', 'status', 'sort',
+        'created_at', 'updated_at',
+    ];
+
+    protected array $form = ['{field1}', '{field2}', 'status', 'sort'];
+
+    public array $searchable = [
+        '{field1}' => 'like',
+        'status' => '=',
+    ];
+}

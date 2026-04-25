@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\{ModuleName};
+
+use Catch\Support\Module\Installer as ModuleInstaller;
+use Modules\{ModuleName}\Providers\{ModuleName}ServiceProvider;
+
+class Installer extends ModuleInstaller
+{
+    protected function info(): array
+    {
+        return [
+            'title'       => '{module_title}',
+            'name'        => '{module_name}',
+            'path'        => '{ModuleName}',
+            'keywords'    => '{keywords}',
+            'description' => '{description}',
+            'provider'    => {ModuleName}ServiceProvider::class,
+        ];
+    }
+
+    protected function requirePackages(): void {}
+
+    protected function removePackages(): void {}
+}

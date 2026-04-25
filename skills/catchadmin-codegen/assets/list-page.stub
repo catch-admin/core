@@ -1,0 +1,27 @@
+<template>
+  <div>
+    <catch-table
+      :columns="columns"
+      :api="api"
+      :search-form="search"
+      dialog-width="35%"
+    >
+      <template #dialog="row">
+        <Create :primary="row?.id" :api="api" />
+      </template>
+    </catch-table>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { ref } from 'vue'
+import Create from './form/create.vue'
+
+const api = '{api}'
+
+// table columns
+const columns = {columns}
+
+// table search
+const search = {search}
+</script>

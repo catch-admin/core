@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\{ModuleName}\Providers;
+
+use Catch\Providers\CatchModuleServiceProvider;
+
+class {ModuleName}ServiceProvider extends CatchModuleServiceProvider
+{
+    public function boot(): void {}
+
+    protected function moduleName(): string
+    {
+        return '{ModuleName}';
+    }
+}

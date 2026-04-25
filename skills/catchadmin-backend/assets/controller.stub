@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\{ModuleName}\Http\Controllers;
+
+use Catch\Base\CatchController;
+use Modules\{ModuleName}\Http\Requests\{Name}Request;
+use Modules\{ModuleName}\Models\{Name};
+
+class {Name}Controller extends CatchController
+{
+    public function __construct(
+        protected readonly {Name} $model
+    ) {}
+
+    public function index(): mixed
+    {
+        return $this->model->getList();
+    }
+
+    public function store({Name}Request $request): mixed
+    {
+        return $this->model->storeBy($request->all());
+    }
+
+    public function show(int $id): mixed
+    {
+        return $this->model->firstBy($id);
+    }
+
+    public function update(int $id, {Name}Request $request): mixed
+    {
+        return $this->model->updateBy($id, $request->all());
+    }
+
+    public function destroy(int $id): mixed
+    {
+        return $this->model->deleteBy($id);
+    }
+
+    public function enable(int $id): bool
+    {
+        return $this->model->toggleBy($id);
+    }
+}

@@ -1,0 +1,26 @@
+<template>
+  <catch-table :api="api" :columns="columns" :search-form="searchForm" dialog-width="35%">
+    <template #dialog="row">
+      <Create :primary="row?.id" :api="api" />
+    </template>
+  </catch-table>
+</template>
+
+<script setup lang="ts">
+import Create from './form/create.vue'
+
+const api = '{module}/{resources}'
+
+const columns = [
+  { type: 'selection' },
+  { prop: 'id', label: 'ID', width: 80 },
+  { prop: '{field1}', label: '{Field1 Label}' },
+  { prop: '{field2}', label: '{Field2 Label}' },
+  { prop: 'created_at', label: '创建时间' },
+  { type: 'operate', label: '操作', width: 180 },
+]
+
+const searchForm = [
+  { type: 'input', name: '{field1}', label: '{Field1 Label}', placeholder: '请输入' },
+]
+</script>

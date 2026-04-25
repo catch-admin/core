@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\{ModuleName}\Enums;
+
+use Catch\Enums\Enum;
+
+enum {Name}: int implements Enum
+{
+    case {Case1} = 1;  // Values MUST start from 1
+    case {Case2} = 2;
+
+    public function value(): int
+    {
+        return $this->value;
+    }
+
+    public function name(): string
+    {
+        return match ($this) {
+            self::{Case1} => '{case1_label}',
+            self::{Case2} => '{case2_label}',
+        };
+    }
+}

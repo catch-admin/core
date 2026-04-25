@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('{table_name}', function (Blueprint $table) {
+            $table->id();
+            // business fields
+            $table->string('{field1}')->default('');
+            $table->string('{field2}')->default('');
+            $table->tinyInteger('status')->default(1);          // 1=enabled, 2=disabled
+            $table->unsignedInteger('sort')->default(0);
+            $table->unsignedInteger('creator_id')->default(0);
+            $table->unsignedInteger('created_at')->default(0);  // Unix timestamp
+            $table->unsignedInteger('updated_at')->default(0);  // Unix timestamp
+            $table->unsignedInteger('deleted_at')->default(0);  // 0=not deleted
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('{table_name}');
+    }
+};

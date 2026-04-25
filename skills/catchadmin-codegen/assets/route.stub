@@ -1,0 +1,11 @@
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Support\Facades\Route;
+use Modules\{ModuleName}\Http\Controllers\{Name}Controller;
+
+Route::prefix('{module_name}')->group(function () {
+    Route::adminResource('{resources}', {Name}Controller::class);
+    //next
+});
