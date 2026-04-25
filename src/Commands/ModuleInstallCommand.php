@@ -13,7 +13,6 @@
 namespace Catch\Commands;
 
 use Catch\CatchAdmin;
-use Catch\Facade\Module;
 use Illuminate\Support\Str;
 
 class ModuleInstallCommand extends CatchCommand
@@ -37,12 +36,9 @@ class ModuleInstallCommand extends CatchCommand
 
         // 安装所有模块
         if ($this->option('all')) {
-            $modules = Module::all();
             foreach ($installers as $installer) {
-                if (! $modules->pluck('name')->contains($installer->getInfo()['name'])) {
-                    $installer->install();
-                    $this->comment('✔ '.$installer->getInfo()['title'].'安装成功');
-                }
+                $installer->install();
+                $this->comment('✔ ' . $installer->getInfo()['title'] . '安装成功');
             }
         } else {
             $modules = [];
@@ -81,13 +77,13 @@ class ModuleInstallCommand extends CatchCommand
                             $selectInstaller->uninstall();
                             $selectInstaller->install();
                         }
-                        $this->info(implode(',', $selectedModulesTitle).' 已强制安装');
+                        $this->info(implode(',', $selectedModulesTitle) . ' 已强制安装');
                     }
                 } else {
                     foreach ($selectInstallers as $selectInstaller) {
                         $selectInstaller->install();
                     }
-                    $this->info(implode(',', $selectedModulesTitle).' 已安装成功');
+                    $this->info(implode(',', $selectedModulesTitle) . ' 已安装成功');
                 }
             } catch (\Throwable $exception) {
                 $this->error($exception->getMessage());
