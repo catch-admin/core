@@ -23,7 +23,7 @@ use Illuminate\Support\Str;
 
 class CatchAdmin
 {
-    public const string VERSION = '1.2.0';
+    public const string VERSION = '1.3.0';
 
     /**
      * version
@@ -43,7 +43,7 @@ class CatchAdmin
      */
     public static function moduleRootPath(): string
     {
-        return self::makeDir(base_path(self::moduleRoot()).DIRECTORY_SEPARATOR);
+        return self::makeDir(base_path(self::moduleRoot()) . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -64,10 +64,10 @@ class CatchAdmin
     public static function getModulePath(string $module, bool $make = true): string
     {
         if ($make) {
-            return self::makeDir(self::moduleRootPath().ucfirst($module).DIRECTORY_SEPARATOR);
+            return self::makeDir(self::moduleRootPath() . ucfirst($module) . DIRECTORY_SEPARATOR);
         }
 
-        return self::moduleRootPath().ucfirst($module).DIRECTORY_SEPARATOR;
+        return self::moduleRootPath() . ucfirst($module) . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -87,7 +87,7 @@ class CatchAdmin
      */
     public static function isModulePathExist(string $module): bool
     {
-        return File::isDirectory(self::moduleRootPath().ucfirst($module).DIRECTORY_SEPARATOR);
+        return File::isDirectory(self::moduleRootPath() . ucfirst($module) . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -95,7 +95,7 @@ class CatchAdmin
      */
     public static function getModuleMigrationPath(string $module): string
     {
-        return self::makeDir(self::getModulePath($module).'database'.DIRECTORY_SEPARATOR.'migrations'.DIRECTORY_SEPARATOR);
+        return self::makeDir(self::getModulePath($module) . 'database' . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -103,7 +103,7 @@ class CatchAdmin
      */
     public static function getModuleSeederPath(string $module): string
     {
-        return self::makeDir(self::getModulePath($module).'database'.DIRECTORY_SEPARATOR.'seeder'.DIRECTORY_SEPARATOR);
+        return self::makeDir(self::getModulePath($module) . 'database' . DIRECTORY_SEPARATOR . 'seeder' . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -119,7 +119,7 @@ class CatchAdmin
      */
     public static function getModuleRootNamespace(): string
     {
-        return config('catch.module.namespace', 'Modules').'\\';
+        return config('catch.module.namespace', 'Modules') . '\\';
     }
 
     /**
@@ -131,7 +131,7 @@ class CatchAdmin
             return ltrim($moduleName, '\\') . '\\';
         }
 
-        return self::getModuleRootNamespace().ucfirst($moduleName).'\\';
+        return self::getModuleRootNamespace() . ucfirst($moduleName) . '\\';
     }
 
     /**
@@ -139,7 +139,7 @@ class CatchAdmin
      */
     public static function getModuleModelNamespace($moduleName): string
     {
-        return self::getModuleNamespace($moduleName).'Models\\';
+        return self::getModuleNamespace($moduleName) . 'Models\\';
     }
 
     /**
@@ -147,12 +147,12 @@ class CatchAdmin
      */
     public static function getModuleServiceProviderNamespace($moduleName): string
     {
-        return self::getModuleNamespace($moduleName).'Providers\\';
+        return self::getModuleNamespace($moduleName) . 'Providers\\';
     }
 
     public static function getModuleServiceProvider($moduleName): string
     {
-        return self::getModuleServiceProviderNamespace($moduleName).ucfirst($moduleName).'ServiceProvider';
+        return self::getModuleServiceProviderNamespace($moduleName) . ucfirst($moduleName) . 'ServiceProvider';
     }
 
     /**
@@ -160,7 +160,7 @@ class CatchAdmin
      */
     public static function getModuleControllerNamespace($moduleName): string
     {
-        return self::getModuleNamespace($moduleName).'Http\\Controllers\\';
+        return self::getModuleNamespace($moduleName) . 'Http\\Controllers\\';
     }
 
     /**
@@ -168,7 +168,7 @@ class CatchAdmin
      */
     public static function getModuleRequestNamespace($moduleName): string
     {
-        return self::getModuleNamespace($moduleName).'Http\\Requests\\';
+        return self::getModuleNamespace($moduleName) . 'Http\\Requests\\';
     }
 
     /**
@@ -176,7 +176,7 @@ class CatchAdmin
      */
     public static function getModuleEventsNamespace($moduleName): string
     {
-        return self::getModuleNamespace($moduleName).'Events\\';
+        return self::getModuleNamespace($moduleName) . 'Events\\';
     }
 
     /**
@@ -184,7 +184,7 @@ class CatchAdmin
      */
     public static function getModuleListenersNamespace($moduleName): string
     {
-        return self::getModuleNamespace($moduleName).'Listeners\\';
+        return self::getModuleNamespace($moduleName) . 'Listeners\\';
     }
 
     /**
@@ -192,7 +192,7 @@ class CatchAdmin
      */
     public static function getModuleProviderPath(string $module): string
     {
-        return self::makeDir(self::getModulePath($module).'Providers'.DIRECTORY_SEPARATOR);
+        return self::makeDir(self::getModulePath($module) . 'Providers' . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -200,7 +200,7 @@ class CatchAdmin
      */
     public static function getModuleModelPath(string $module): string
     {
-        return self::makeDir(self::getModulePath($module).'Models'.DIRECTORY_SEPARATOR);
+        return self::makeDir(self::getModulePath($module) . 'Models' . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -208,7 +208,7 @@ class CatchAdmin
      */
     public static function getModuleControllerPath(string $module): string
     {
-        return self::makeDir(self::getModulePath($module).'Http'.DIRECTORY_SEPARATOR.'Controllers'.DIRECTORY_SEPARATOR);
+        return self::makeDir(self::getModulePath($module) . 'Http' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -216,7 +216,7 @@ class CatchAdmin
      */
     public static function getModuleRequestPath(string $module): string
     {
-        return self::makeDir(self::getModulePath($module).'Http'.DIRECTORY_SEPARATOR.'Requests'.DIRECTORY_SEPARATOR);
+        return self::makeDir(self::getModulePath($module) . 'Http' . DIRECTORY_SEPARATOR . 'Requests' . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -224,7 +224,7 @@ class CatchAdmin
      */
     public static function getModuleEventPath(string $module): string
     {
-        return self::makeDir(self::getModulePath($module).'Events'.DIRECTORY_SEPARATOR);
+        return self::makeDir(self::getModulePath($module) . 'Events' . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -232,7 +232,7 @@ class CatchAdmin
      */
     public static function getModuleListenersPath(string $module): string
     {
-        return self::makeDir(self::getModulePath($module).'Listeners'.DIRECTORY_SEPARATOR);
+        return self::makeDir(self::getModulePath($module) . 'Listeners' . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -240,7 +240,7 @@ class CatchAdmin
      */
     public static function getCommandsPath(string $module): string
     {
-        return self::makeDir(self::getModulePath($module).'Commands'.DIRECTORY_SEPARATOR);
+        return self::makeDir(self::getModulePath($module) . 'Commands' . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -248,7 +248,7 @@ class CatchAdmin
      */
     public static function getCommandsNamespace(string $module): string
     {
-        return self::getModuleNamespace($module).'Commands\\';
+        return self::getModuleNamespace($module) . 'Commands\\';
     }
 
     /**
@@ -256,11 +256,11 @@ class CatchAdmin
      */
     public static function getModuleRoutePath(string $module, string $routeName = 'route.php'): string
     {
-        $path = self::getModulePath($module).'routes'.DIRECTORY_SEPARATOR;
+        $path = self::getModulePath($module) . 'routes' . DIRECTORY_SEPARATOR;
 
         self::makeDir($path);
 
-        return $path.$routeName;
+        return $path . $routeName;
     }
 
     /**
@@ -281,7 +281,7 @@ class CatchAdmin
 
     public static function getModuleInstaller(string $module): Installer
     {
-        $installer = self::getModuleNamespace($module).'Installer';
+        $installer = self::getModuleNamespace($module) . 'Installer';
 
         if (class_exists($installer)) {
             return app($installer);
@@ -311,7 +311,7 @@ class CatchAdmin
      */
     public static function getControllerActions(string $module, string $controller): array
     {
-        $controller = self::getModuleControllerNamespace($module).Str::of($controller)->ucfirst()->append('Controller')->toString();
+        $controller = self::getModuleControllerNamespace($module) . Str::of($controller)->ucfirst()->append('Controller')->toString();
 
         $reflectionClass = new \ReflectionClass($controller);
 
@@ -337,9 +337,6 @@ class CatchAdmin
         return app()->make(ModuleRepositoryInterface::class)->all();
     }
 
-    /**
-     * @return array
-     */
     public static function getAllProviders(): array
     {
         $dirs = File::directories(self::moduleRootPath());
