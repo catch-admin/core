@@ -1,5 +1,10 @@
 <?php
 
+use Catch\Listeners\RequestHandledListener;
+use Catch\Middleware\AuthMiddleware;
+use Catch\Middleware\JsonResponseMiddleware;
+use Modules\User\Models\User;
+
 // +----------------------------------------------------------------------
 // | CatchAdmin
 // +----------------------------------------------------------------------
@@ -56,13 +61,13 @@ return [
         'default' => ['develop', 'user', 'common'],
 
         'default_dirs' => [
-            'Http'.DIRECTORY_SEPARATOR,
+            'Http' . DIRECTORY_SEPARATOR,
 
-            'Http'.DIRECTORY_SEPARATOR.'Requests'.DIRECTORY_SEPARATOR,
+            'Http' . DIRECTORY_SEPARATOR . 'Requests' . DIRECTORY_SEPARATOR,
 
-            'Http'.DIRECTORY_SEPARATOR.'Controllers'.DIRECTORY_SEPARATOR,
+            'Http' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,
 
-            'Models'.DIRECTORY_SEPARATOR,
+            'Models' . DIRECTORY_SEPARATOR,
         ],
 
         // 模块存储驱动
@@ -96,11 +101,11 @@ return [
     */
     'response' => [
         // JSON 响应, 保证响应数据都是 json
-        'always_json' => \Catch\Middleware\JsonResponseMiddleware::class,
+        'always_json' => JsonResponseMiddleware::class,
 
         // 响应监听者
         // 监听[RequestHandled]事件
-        'request_handled_listener' => \Catch\Listeners\RequestHandledListener::class,
+        'request_handled_listener' => RequestHandledListener::class,
     ],
 
     /*
@@ -124,7 +129,7 @@ return [
    | 管理员授权认证模型
    |--------------------------------------------------------------------------
    */
-    'auth_model' => \Modules\User\Models\User::class,
+    'auth_model' => User::class,
 
     /*
    |--------------------------------------------------------------------------
@@ -142,8 +147,8 @@ return [
         'prefix' => 'api',
 
         'middlewares' => [
-            \Catch\Middleware\AuthMiddleware::class,
-            \Catch\Middleware\JsonResponseMiddleware::class,
+            AuthMiddleware::class,
+            JsonResponseMiddleware::class,
         ],
     ],
 
@@ -154,7 +159,7 @@ return [
    | 如果不设置，将不会生成相关的 Vue 文件
    |--------------------------------------------------------------------------
    */
-    'views_path' => base_path('web'.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR),
+    'views_path' => base_path('web' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR),
 
     /*
    |--------------------------------------------------------------------------
@@ -203,7 +208,10 @@ return [
     */
     'model' => [
         // created_at & updated_at format
-        'date_format' => 'Y-m-d H:i:s'
+        'date_format' => 'Y-m-d H:i:s',
+
+        // update creator id
+        'change_creator_id' => (bool) env('CATCH_CHANGE_CREATOR_ID', false),
     ],
 
     /*
@@ -216,5 +224,5 @@ return [
          * 导出路径, 相对于 storage 目录得相对路径
          */
         'export_path' => 'excel/export',
-    ]
+    ],
 ];

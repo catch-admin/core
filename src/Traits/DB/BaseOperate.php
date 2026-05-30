@@ -130,6 +130,8 @@ trait BaseOperate
      */
     public function updateBy($id, array $data): mixed
     {
+        $this->changeCreatorId();
+
         $model = $this->where($this->getKeyName(), $id)->first();
 
         $updated = $model->fill($this->filterData($data, true))->save();
@@ -148,7 +150,7 @@ trait BaseOperate
     public function batchUpdate(string $field, array $condition, array $data): bool
     {
         try {
-            $batchSQL = 'UPDATE `'.withTablePrefix($this->getTable()).'` SET ';
+            $batchSQL = 'UPDATE `' . withTablePrefix($this->getTable()) . '` SET ';
 
             foreach ($data as $key => $values) {
                 $batchSQL .= sprintf('`%s` = CASE ', $key);
@@ -160,16 +162,16 @@ trait BaseOperate
                     $batchSQL .= sprintf('WHEN %s = %s THEN "%s" ', $field, $condition[$index], $value);
                 }
 
-                $batchSQL .= 'ELSE '.$key.' END, ';
+                $batchSQL .= 'ELSE ' . $key . ' END, ';
             }
 
-            $where = ' WHERE '.$field.' IN ('.implode(',', $condition).')';
+            $where = ' WHERE ' . $field . ' IN (' . implode(',', $condition) . ')';
 
-            $batchSQL = trim($batchSQL, ', ').$where;
+            $batchSQL = trim($batchSQL, ', ') . $where;
 
             return DB::statement($batchSQL);
         } catch (\Exception|\Throwable $exception) {
-            throw new FailedException('批量更新报错: '.$exception->getMessage());
+            throw new FailedException('批量更新报错: ' . $exception->getMessage());
         }
     }
 
@@ -235,10 +237,8 @@ trait BaseOperate
     /**
      * get first by ID
      *
-     * @param  $value
      * @param  null  $field
      * @param  string[]  $columns
-     * @return ?Model
      */
     public function firstBy($value, $field = null, array $columns = ['*']): ?Model
     {
@@ -296,6 +296,7 @@ trait BaseOperate
      * 批量删除
      *
      * @return true
+     *
      * @throws \Throwable
      */
     public function deletesBy(array|string $ids, bool $force = false, ?Closure $callback = null): bool
@@ -368,6 +369,7 @@ trait BaseOperate
 
     /**
      * @return true
+     *
      * @throws \Throwable
      */
     public function togglesBy(array|string $ids, string $field = 'status'): bool
@@ -612,7 +614,6 @@ trait BaseOperate
     }
 
     /**
-     * @param  bool  $is
      * @return $this
      */
     public function fillCreatorId(bool $is = true): static
@@ -625,7 +626,6 @@ trait BaseOperate
     /**
      * 设置需要同步的字段
      *
-     * @param  array|null  $fields
      * @return $this
      */
     public function setSyncParentFields(?array $fields = []): static
@@ -637,5 +637,17 @@ trait BaseOperate
         }
 
         return $this;
+    }
+
+    /**
+     * 是否修改创建人
+     *
+     * @return void
+     */
+    protected function changeCreatorId(): void
+    {
+        $this->fillCreatorId(
+            config('catch.model.change_creator_id', true)
+        );
     }
 }
