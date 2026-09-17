@@ -8,7 +8,7 @@
         "ext-zip": "*",
         "laravel/sanctum": "^v4.3.0",
         "maatwebsite/excel": "^3.1.68",
-        "jason/captcha": "^v1.2.0",
+        "mews/captcha": "^3.5",
         "nette/php-generator": "^v4.1.8"
     },
     "license": "MIT",
