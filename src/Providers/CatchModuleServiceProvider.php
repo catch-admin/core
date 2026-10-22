@@ -10,6 +10,8 @@
 // | Author: JaguarJack [ njphper@gmail.com ]
 // +----------------------------------------------------------------------
 
+declare(strict_types=1);
+
 namespace Catch\Providers;
 
 use Catch\CatchAdmin;
@@ -23,6 +25,7 @@ abstract class CatchModuleServiceProvider extends ServiceProvider
 {
     protected array $events = [];
 
+    protected array $commands = [];
 
     /**
      * register
@@ -32,6 +35,8 @@ abstract class CatchModuleServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->commands($this->commands);
+
         foreach ($this->events as $event => $listener) {
             Event::listen($event, $listener);
         }
